@@ -4,6 +4,9 @@ import (
 	"crypto/subtle"
 	"encoding/hex"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
+	_ "github.com/gofiber/fiber/v2/middleware/encryptcookie"
+	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"time"
 )
 
@@ -30,6 +33,10 @@ func handleHTTP() {
 		CacheDuration: 10 * time.Second,
 		MaxAge:        3600,
 	})
+
+	app.Use(limiter.New(), encryptcookie.New(encryptcookie.Config{
+		Key: "secret-thirty-2-character-string",
+	}))
 
 	app.Post("/auth/*", func(c *fiber.Ctx) error {
 		salt := []byte("salt")
