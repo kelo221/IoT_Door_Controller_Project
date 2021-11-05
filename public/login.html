@@ -5,8 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - Free Bulma template</title>
-    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet"> -->
+    <title>Login</title>
     <link href="https://fonts.googleapis.com/css?family=Questrial&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://kit.fontawesome.com/97f2692db1.js" crossorigin="anonymous"></script>
@@ -23,10 +22,10 @@
                 <div class="box">
                     <figure class="avatar">
                     </figure>
-                    <form>
+                    <form action="auth" method="POST">
                         <div class="field">
                             <div class="control has-icons-left has-icons-right">
-                                <input class="input is-medium" type="account" placeholder="Account">
+                                    <input type="text" class="input is-medium"  name="username" placeholder="Username" required>
                                 <span class="icon is-left">
                                     <i class="fas fa-user"></i>
                                 </span>
@@ -34,13 +33,13 @@
                         </div>
                         <div class="field">
                             <div class="control has-icons-left has-icons-right">
-                                <input class="input is-medium" type="password" placeholder="Password">
+                                <input type="password"  class="input is-medium"  name="password" placeholder="Password" required>
                                 <span class="icon is-left">
                                     <i class="fas fa-key"></i>
                                 </span>
                             </div>
                         </div>
-                        <button class="button is-block is-info is-large is-fullwidth">Login <i class="fa fa-sign-in" aria-hidden="true"></i></button>
+                        <input type="submit" class="button is-block is-info is-large is-fullwidth">
                     </form>
                 </div>
             </div>

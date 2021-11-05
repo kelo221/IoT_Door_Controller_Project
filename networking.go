@@ -1,9 +1,16 @@
 package main
 
 import (
+	"crypto/subtle"
+	"encoding/hex"
 	"github.com/gofiber/fiber/v2"
 	"time"
 )
+
+type userData struct {
+	Username string `json:"username" xml:"username" form:"username"`
+	Password string `json:"password" xml:"password" form:"password"`
+}
 
 func handleHTTP() {
 
@@ -19,9 +26,27 @@ func handleHTTP() {
 		Compress:      true,
 		ByteRange:     true,
 		Browse:        true,
-		Index:         "index.html",
+		Index:         "login.html",
 		CacheDuration: 10 * time.Second,
 		MaxAge:        3600,
+	})
+
+	app.Post("/auth/*", func(c *fiber.Ctx) error {
+		salt := []byte("salt")
+		p := new(userData)
+		if err := c.BodyParser(p); err != nil {
+			return err
+		}
+
+		passwordHash := hex.EncodeToString(HashPassword([]byte(p.Password), salt))
+		expectedPasswordHash := aqlToString("FOR r IN DOOR_LOGIN FILTER r.username == \"" + p.Username + "\" RETURN r.hash")
+
+		usernameMatch := subtle.ConstantTimeCompare([]byte(passwordHash[:]), []byte((expectedPasswordHash[:]))) == 1
+
+		if usernameMatch {
+			return c.SendStatus(200)
+		}
+		return c.SendStatus(400)
 	})
 
 	err := app.Listen(":8080")
