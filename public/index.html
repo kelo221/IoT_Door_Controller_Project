@@ -5,9 +5,84 @@
     <title>The Door</title>
     <link rel="shortcut icon" href="../public/img/door.ico" type="image/x-icon">
     <script src="js/script.js"></script>
+    <script src="https://kit.fontawesome.com/97f2692db1.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<!-- NavBar -->
+<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item">
+<!--            <i id="fan" class="fas fa-fan has-text-white-bis mx-1 rotate"></i>
+            <img src="public/img/logoNew.png" alt="" height="40" id="logo">-->
+        </a>
 
+        <a id="homeButton" class="navbar-item">
+            <span class="icon mx-1">
+                <i class="fas fa-home"></i>
+            </span>
+            Home
+        </a>
+
+        <a id="loginButton" class="navbar-item">
+            <span class="icon mx-1">
+                <i class="far fa-list-alt"></i>
+            </span>
+            History
+        </a>
+    </div>
+
+
+    <div class="navbar-end" >
+        <a id="logoutButton" class="navbar-item">
+            <span class="icon mx-1">
+                <i class="fas fa-sign-out-alt"></i>
+            </span>
+            Log out
+            </a>
+
+        </div>
+    </div>
+</nav>
+<!-- NavBar END -->
+<div class="box mx-1 mt-1 has-background-dark" id="homeContent">
+    <section class="section">
+        <div class="box has-background-warnig">
+            <h3 class="title is-4">welcome</h3>
+            </div>
+    </section>
+
+    <!-- Home Content -->
+    <div class="columns is-centered">
+        <div class="column">
+            <section class="section">
+                <div class="box has-background-warnig">
+                    <h3 class="title is-3">Mode: Hard Lock /Soft Lock /Open </h3>
+
+                    <figure class="is-flex is-align-items-center is-justify-content-center is-128x128" id="switch">
+                        <img src="../public/img/lock.png" alt="lock" id="lockImage">
+                    </figure>
+                    <div class="columns is-centered pb-5">
+                        <label class="radio">
+                            <input type="radio"  name="mode">
+                            Hard Lock
+                        </label>
+                        <label class="radio">
+                            <input type="radio"  name="mode">
+                            Soft Lock
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="mode">
+                            Open
+                        </label>
+                </div>
+                    <div class="columns is-centered pb-5">
+                        <button class="button is-large" id="applyButton">Apply</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
 </body>
 </html>
