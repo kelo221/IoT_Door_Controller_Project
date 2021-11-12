@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	_ "github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/gofiber/template/html"
 	"log"
 	"time"
 )
@@ -19,18 +20,13 @@ type userData struct {
 
 func handleHTTP() {
 
+	engine := html.New("./views", ".html")
 	app := fiber.New(fiber.Config{
-		Prefork:       true,
-		CaseSensitive: true,
-		StrictRouting: true,
-		ServerHeader:  "Fiber",
-		AppName:       "Test App v1.0.1",
+		Views: engine,
 	})
 
 	app.Static("/", "./public", fiber.Static{
 		Compress:      true,
-		ByteRange:     true,
-		Browse:        true,
 		Index:         "login.html",
 		CacheDuration: 10 * time.Second,
 		MaxAge:        3600,
@@ -56,8 +52,9 @@ func handleHTTP() {
 
 		if isLogin {
 			fmt.Println("success")
-			return c.Redirect("home.html")
+			return c.Render("index", fiber.Map{})
 		}
+		fmt.Println("not logged in")
 		return c.Redirect("/")
 	})
 
