@@ -3,10 +3,12 @@ package main
 import (
 	"crypto/subtle"
 	"encoding/hex"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
-	_ "github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
+	"github.com/gofiber/fiber/v2/middleware/session"
+	_ "github.com/gofiber/fiber/v2/middleware/session"
+	"log"
 	"time"
 )
 
@@ -34,11 +36,38 @@ func handleHTTP() {
 		MaxAge:        3600,
 	})
 
-	app.Use(limiter.New(), encryptcookie.New(encryptcookie.Config{
-		Key: "secret-thirty-2-character-string",
+	app.Use(limiter.New(limiter.Config{
+		Max:               20,
+		Expiration:        30 * time.Second,
+		LimiterMiddleware: limiter.SlidingWindow{},
 	}))
 
+	store := session.New()
+
+	app.Get("/home", func(c *fiber.Ctx) error {
+
+		sess, err := store.Get(c)
+		if err != nil {
+			log.Println(err)
+		}
+
+		username := sess.Get("Username")
+		isLogin := username != nil
+
+		if isLogin {
+			fmt.Println("success")
+			return c.Redirect("home.html")
+		}
+		return c.Redirect("/")
+	})
+
 	app.Post("/auth/*", func(c *fiber.Ctx) error {
+
+		sess, err := store.Get(c)
+		if err != nil {
+			log.Println(err)
+		}
+
 		salt := []byte("salt")
 		p := new(userData)
 		if err := c.BodyParser(p); err != nil {
@@ -51,7 +80,14 @@ func handleHTTP() {
 		usernameMatch := subtle.ConstantTimeCompare([]byte(passwordHash[:]), []byte((expectedPasswordHash[:]))) == 1
 
 		if usernameMatch {
-			return c.SendStatus(200)
+
+			sess.Set("Username", p.Username)
+			if err := sess.Save(); err != nil {
+				panic(err)
+			}
+
+			fmt.Println("AUTH OK")
+			return c.Redirect("/home")
 		}
 		return c.SendStatus(400)
 	})
