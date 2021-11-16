@@ -8,17 +8,18 @@
     <link rel="stylesheet" href="../css/style.css">
     <script src="../js/script.js"></script>
 
-<!--    DO NOT CHANGE THE TEMPLATE IS USING A DIFFERENT PATH   -->
+    <!--    DO NOT CHANGE THE TEMPLATE IS USING A DIFFERENT PATH   -->
 </head>
 <body>
+
+
 <!-- NavBar -->
-<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+<nav class="navbar is-link" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item">
-<!--            <i id="fan" class="fas fa-fan has-text-white-bis mx-1 rotate"></i>
-            <img src="public/img/logoNew.png" alt="" height="40" id="logo">-->
+            <!--            <i id="fan" class="fas fa-fan has-text-white-bis mx-1 rotate"></i>
+                        <img src="public/img/logoNew.png" alt="" height="40" id="logo">-->
         </a>
-
 
 
         <a id="homeButton" class="navbar-item">
@@ -37,55 +38,56 @@
     </div>
 
 
-    <div class="navbar-end" >
+    <div class="navbar-end">
         <a id="logoutButton" class="navbar-item">
             <span class="icon mx-1">
                 <i class="fas fa-sign-out-alt"></i>
             </span>
             Log out
-            </a>
-        </div>
+        </a>
+    </div>
 
 </nav>
 <!-- NavBar END -->
-<div class="box mx-1 mt-1 has-background-dark" id="homeContent">
-    <section class="section">
-        <div class="box has-background-warnig">
-            <h3 class="title is-4">welcome</h3>
-            </div>
-    </section>
 
-    <!-- Home Content -->
-    <div class="columns is-centered">
-        <div class="column">
-            <section class="section">
-                <div class="box has-background-warnig">
-                    <h3 class="title is-3">Mode: Hard Lock /Soft Lock /Open </h3>
+<section class="hero is-light is-fullheight">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <div class="column is-4 is-offset-4">
+                <div class="box has-background-white">
+                    <h3 class="title is-4">Welcome {{.User}}!</h3>
+                    <h3 id="modeContainer" class="title is-3">Current Mode: XXX </h3>
 
-                    <figure class="is-flex is-align-items-center is-justify-content-center" id="switch">
-                        <img src="../img/APNG.png" alt="lock" id="lockImage">
-                    </figure>
+
+
+                    <nav class="level mt-1 mx-1">
+                        <div class="level-item has-text-centered">
+                            <img src="../img/lockClosedStatic.png" alt="lock" id="lockImage">
+                        </div>
+                    </nav>
+
+
                     <div class="columns is-centered pb-5">
                         <label class="radio">
-                            <input type="radio"  name="mode">
-                            Hard Lock
+                            <input type="radio" name="mode" checked>
+                            Open
                         </label>
                         <label class="radio">
-                            <input type="radio"  name="mode">
+                            <input type="radio" name="mode">
                             Soft Lock
                         </label>
                         <label class="radio">
                             <input type="radio" name="mode">
-                            Open
+                            Hard Lock
                         </label>
-                </div>
+                    </div>
                     <div class="columns is-centered pb-5">
                         <button class="button is-large" id="applyButton">Apply</button>
                     </div>
                 </div>
-            </section>
+            </div>
         </div>
     </div>
-</div>
+</section>
 </body>
 </html>

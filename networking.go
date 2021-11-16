@@ -52,7 +52,9 @@ func handleHTTP() {
 
 		if isLogin {
 			fmt.Println("success")
-			return c.Render("index", fiber.Map{})
+			return c.Render("index", fiber.Map{
+				"User": username,
+			})
 		}
 		fmt.Println("not logged in")
 		return c.Redirect("/")
