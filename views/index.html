@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>The Door</title>
     <link rel="shortcut icon" href="../img/door.ico" type="image/x-icon">
     <script src="https://kit.fontawesome.com/97f2692db1.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/bulma.css">
+    <link rel="stylesheet" href="../css/bulma-tooltip.min.css">
     <script src="../js/script.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
 
     <!--    DO NOT CHANGE THE TEMPLATE IS USING A DIFFERENT PATH   -->
 </head>
@@ -60,39 +62,36 @@
 
                     <nav class="level mt-1 mx-1">
                         <div class="level-item has-text-centered">
-                            <img src="../img/lockClosedStatic.png" alt="lock" id="lockImage">
+                            <img src="../img/lockOpenStatic.png" alt="lock" id="lockImage">
                         </div>
                     </nav>
 
-
-                    <div class="columns is-centered pb-5">
-
-                    </div>
-                    <!--   open   -->
+                    <div class="columns is-centered p-3">
+                        <!--   open   -->
                         <label class="radio">
                             <input type="radio" name="mode" checked>
                             Open
                         </label>
-                        <span class="icon is-right">
+                        <span class="icon has-tooltip-white " data-tooltip="Door opens to anyone.">
                             <i class="fas fa-info-circle"></i>
                         </span>
-                    <!--  soft  -->
+                        <!--  soft  -->
                         <label class="radio">
                             <input type="radio" name="mode">
                             Soft Lock
                         </label>
-                        <span class="icon is-right">
+                        <span class="icon has-tooltip-white " data-tooltip="Door only opens when a correct RDIF tag is read.">
                             <i class="fas fa-info-circle"></i>
                         </span>
-                    <!--  hard  -->
+                        <!--  hard  -->
                         <label class="radio">
                             <input type="radio" name="mode">
                             Hard Lock
                         </label>
-                        <span class="icon is-right">
-                            <i  class="fas fa-info-circle"></i>
+                        <span class="icon has-tooltip-white " data-tooltip="The door can only be opened manually from the web interface.">
+                            <i class="fas fa-info-circle"></i>
                         </span>
-
+                    </div>
 
                     <div class="columns is-centered pb-5">
                         <button class="button is-large" id="applyButton">Apply</button>
