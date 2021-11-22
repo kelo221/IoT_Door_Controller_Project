@@ -15,10 +15,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
     const statusButton = document.getElementById("statusButton")
 
     const homeDiv = document.getElementById("homeContent")
-    const historyDiv = document.getElementById("historyContent")
+    // const historyDiv = document.getElementById("historyContent")
     const statusDiv = document.getElementById("statusContent")
 
-    historyDiv.style.display = "none"
+    homeDiv.style.display = "block"
+    // historyDiv.style.display = "none"
     statusDiv.style.display = "none"
 
     let currentLockStatus = 0
@@ -28,7 +29,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     homeButton.addEventListener("click", () => {
         console.log("homeButton clicked.")
         homeDiv.style.display = "block"
-        historyDiv.style.display = "none"
+        //historyDiv.style.display = "none"
         statusDiv.style.display = "none"
     });
 
@@ -49,7 +50,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     statusButton.addEventListener("click", () => {
         console.log("StatusButton clicked.")
         homeDiv.style.display = "none"
-        historyDiv.style.display = "none"
+        // historyDiv.style.display = "none"
         statusDiv.style.display = "block"
     });
 
