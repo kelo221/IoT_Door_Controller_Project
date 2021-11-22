@@ -30,7 +30,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         break;
                     case 1:     // SOFT
 
-                        if (currentLockStatus !== 1) {
+                        if (currentLockStatus === 0) {
                             lockImage.src = "img/lockCloseAnim.png"
                             modeContainer.innerHTML ="Current Mode: Soft Lock"
                             currentLockStatus = 1
