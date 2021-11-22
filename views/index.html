@@ -36,6 +36,13 @@
             </span>
             History
         </a>
+
+        <a id="statusButton" class="navbar-item">
+            <span class="icon mx-1">
+                <i class="far fa-map"></i>
+            </span>
+            Status
+        </a>
     </div>
 
 
@@ -54,7 +61,7 @@
 <section class="hero is-light is-fullheight">
     <div class="hero-body">
         <div class="container has-text-centered">
-            <div class="column is-4 is-offset-4">
+            <div class="column is-9 is-offset-2">
                 <div class="box has-background-white">
                     <h3 class="title is-4">Welcome {{.User}}!</h3>
 
@@ -101,5 +108,27 @@
         </div>
     </div>
 </section>
+
+
+
+<!-- DoorStatus -->
+<section class="hero is-light is-fullheight">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <div class="column is-9 is-offset-2">
+                <div class="box has-background-white">
+                    <h3 class="title is-4"><br></h3>
+                    <h3 id="statusContainer" class="title is-3">Current Status: XXX </h3>
+                    <div class="level-item has-text-centered">
+
+                            <img src="../img/DoorStatus.png" alt="status" id="doorImage">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- DoorStatus END -->
 </body>
 </html>
