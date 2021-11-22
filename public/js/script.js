@@ -10,7 +10,50 @@ window.addEventListener('DOMContentLoaded', (event) => {
     const applyButton = document.getElementById("applyButton")
     const modeContainer = document.getElementById("modeContainer")
 
+    const homeButton = document.getElementById("homeButton")
+    const historyButton = document.getElementById("historyButton")
+    const statusButton = document.getElementById("statusButton")
+
+    const homeDiv = document.getElementById("homeContent")
+    const historyDiv = document.getElementById("historyContent")
+    const statusDiv = document.getElementById("statusContent")
+
+    historyDiv.style.display = "none"
+    statusDiv.style.display = "none"
+
     let currentLockStatus = 0
+
+
+    //  Home button handling
+    homeButton.addEventListener("click", () => {
+        console.log("homeButton clicked.")
+        homeDiv.style.display = "block"
+        historyDiv.style.display = "none"
+        statusDiv.style.display = "none"
+    });
+
+/*
+
+    //  history button handling
+    historyButton.addEventListener("click", () => {
+        console.log("historyButton clicked.")
+        homeDiv.style.display = "none"
+        historyDiv.style.display = "block"
+        statusDiv.style.display = "none"
+
+    });
+*/
+
+
+    //  login button handling
+    statusButton.addEventListener("click", () => {
+        console.log("StatusButton clicked.")
+        homeDiv.style.display = "none"
+        historyDiv.style.display = "none"
+        statusDiv.style.display = "block"
+    });
+
+
 
     applyButton.addEventListener("click", function () {
 
