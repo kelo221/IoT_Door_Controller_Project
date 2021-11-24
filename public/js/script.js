@@ -8,7 +8,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
     const lockImage = document.getElementById("lockImage")
     const lockRadio = document.getElementsByName("mode")
     const applyButton = document.getElementById("applyButton")
+    const changeButton = document.getElementById("changeButton")
     const modeContainer = document.getElementById("modeContainer")
+    const statusContainer = document.getElementById("statusContainer")
 
     const homeButton = document.getElementById("homeButton")
     const historyButton = document.getElementById("historyButton")
@@ -23,6 +25,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     statusDiv.style.display = "none"
 
     let currentLockStatus = 0
+    let currentDoorStatus = 0
 
 
     //  Home button handling
@@ -96,5 +99,25 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 
+
+    changeButton.addEventListener("click", function () {
+        console.log("status changed")
+        while(1) {
+            if (currentDoorStatus == 0) {
+                lockImage.src = "img/NewDoorOpen.png"
+                statusContainer.innerHTML = "Current Status: Open"
+                console.log("open now")
+                currentDoorStatus = 1
+
+            }
+            if (currentDoorStatus == 1) {
+                lockImage.src = "img/NewDoorClosed.png"
+                statusContainer.innerHTML = "Current Status: Closed"
+                console.log("closed now")
+                currentDoorStatus = 0
+
+            }
+        }
+    });
 
 });
