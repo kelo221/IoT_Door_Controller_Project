@@ -6,6 +6,7 @@ console.log("hello world")
 window.addEventListener('DOMContentLoaded', (event) => {
     console.log("DOM LOADED")
     const lockImage = document.getElementById("lockImage")
+    const doorImage = document.getElementById("doorImage")
     const lockRadio = document.getElementsByName("mode")
     const applyButton = document.getElementById("applyButton")
     const changeButton = document.getElementById("changeButton")
@@ -102,22 +103,26 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     changeButton.addEventListener("click", function () {
         console.log("status changed")
-        while(1) {
-            if (currentDoorStatus == 0) {
-                lockImage.src = "img/NewDoorOpen.png"
-                statusContainer.innerHTML = "Current Status: Open"
-                console.log("open now")
-                currentDoorStatus = 1
 
-            }
-            if (currentDoorStatus == 1) {
-                lockImage.src = "img/NewDoorClosed.png"
+        switch (currentDoorStatus) {
+            case 0:     // OPEN
+                    doorImage.src = "img/NewDoorOpen.png"
+                    statusContainer.innerHTML = "Current Status: Open"
+                    console.log("open now")
+                    currentDoorStatus = 1
+
+                break;
+            case 1:     // CLOSED
+
+                doorImage.src = "img/NewDoorClosed.png"
                 statusContainer.innerHTML = "Current Status: Closed"
                 console.log("closed now")
                 currentDoorStatus = 0
+                break;
 
-            }
         }
+
+
     });
 
 });
