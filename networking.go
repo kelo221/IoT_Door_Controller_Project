@@ -91,6 +91,41 @@ func handleHTTP() {
 		return c.SendStatus(400)
 	})
 
+	///TODO send only when session is correct
+	app.Get("/statistic/modeChanged", func(c *fiber.Ctx) error {
+		//Statistics
+		//when open?(time/date)
+		//mode change? (locked status)
+		//get chip info? (who opened?)
+
+		return c.Send(
+
+			[]byte("[" +
+				"{\"Who\":\"John\", \"When\":1012239724, \"Mode\":\"Soft-Lock\"}," +
+				"{\"Who\":\"Max\", \"When\":1757699363, \"Mode\":\"Hard-Lock\"}," +
+				"{\"Who\":\"Mona\", \"When\":1586899080 , \"Mode\":\"Open\"}," +
+				"{\"Who\":\"Lisa\", \"When\":1327233733, \"Mode\":\"Hard-Lock\"}" +
+				"]"),
+		)
+	})
+
+	app.Get("/statistic/keycardUsed", func(c *fiber.Ctx) error {
+		//Statistics
+		//when open?(time/date)
+		//mode change? (locked status)
+		//get chip info? (who opened?)
+
+		return c.Send(
+
+			[]byte("[" +
+				"{\"Who\":\"John\", \"When\":1012239724 }," +
+				"{\"Who\":\"Max\", \"When\":1757699363}," +
+				"{\"Who\":\"Mona\", \"When\":1586899080}," +
+				"{\"Who\":\"Lisa\", \"When\":1327233733}" +
+				"]"),
+		)
+	})
+
 	err := app.Listen(":8080")
 	if err != nil {
 		panic(err)
