@@ -12,7 +12,7 @@ func main() {
 		state:         protoimpl.MessageState{},
 		sizeCache:     0,
 		unknownFields: nil,
-		DoorIsOpen:    false,
+		DoorOpenInQue: false,
 		LockStatus:    Lock_UNLOCKED,
 	}
 
@@ -34,7 +34,7 @@ func tcpListenerLoop(doorStatus *Lock) {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			go handleConnection(conn, doorStatus)
+			go getTpcPackage(conn, doorStatus)
 		}
 	}
 

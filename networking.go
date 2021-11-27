@@ -10,7 +10,6 @@ import (
 	_ "github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/template/html"
 	"log"
-	"strconv"
 	"time"
 )
 
@@ -55,6 +54,7 @@ func handleHTTP(doorStatus *Lock) {
 			fmt.Println("success")
 			return c.Render("index", fiber.Map{
 				"User": username,
+				"Mode": doorStatus.GetLockStatus(),
 			})
 		}
 		fmt.Println("not logged in")
@@ -137,7 +137,7 @@ func handleHTTP(doorStatus *Lock) {
 		return c.Send(
 
 			[]byte("[" +
-				"{\"lockState\":\" " + (doorStatus.GetLockStatus()).String() + "\", \"isOpen\": " + (strconv.FormatBool(doorStatus.GetDoorIsOpen())) + " }" +
+				"{\"lockState\":\" " + (doorStatus.GetLockStatus()).String() + "\"  }" +
 				"]"),
 		)
 	})

@@ -7,7 +7,7 @@ import (
 	"net"
 )
 
-func handleConnection(conn net.Conn, container *Lock) {
+func getTpcPackage(conn net.Conn, container *Lock) {
 
 	defer func(conn net.Conn) {
 		err := conn.Close()
