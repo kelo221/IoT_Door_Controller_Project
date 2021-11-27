@@ -10,6 +10,7 @@ import (
 	_ "github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/template/html"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -122,6 +123,21 @@ func handleHTTP(doorStatus *Lock) {
 				"{\"Who\":\"Max\", \"When\":1757699363}," +
 				"{\"Who\":\"Mona\", \"When\":1586899080}," +
 				"{\"Who\":\"Lisa\", \"When\":1327233733}" +
+				"]"),
+		)
+	})
+
+	app.Get("/doorData", func(c *fiber.Ctx) error {
+
+		//	fmt.Println(doorStatus.GetLockStatus())
+		//	fmt.Println(doorStatus.GetDoorIsOpen())
+
+		//	protojson.Marshal should be used, not sure why is not working
+
+		return c.Send(
+
+			[]byte("[" +
+				"{\"lockState\":\" " + (doorStatus.GetLockStatus()).String() + "\", \"isOpen\": " + (strconv.FormatBool(doorStatus.GetDoorIsOpen())) + " }" +
 				"]"),
 		)
 	})
