@@ -18,7 +18,7 @@ type userData struct {
 	Password string `json:"password" xml:"password" form:"password"`
 }
 
-func handleHTTP() {
+func handleHTTP(doorStatus *Lock) {
 
 	engine := html.New("./views", ".html")
 	app := fiber.New(fiber.Config{

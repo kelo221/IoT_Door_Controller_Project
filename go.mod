@@ -7,6 +7,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.21.0
 	github.com/gofiber/template v1.6.18
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
+	google.golang.org/protobuf v1.26.0
 )
 
 require (
