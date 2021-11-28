@@ -2,6 +2,11 @@
 
 console.log("hello world")
 
+//TODO  send the lock (integer) status to /updateLock/:lockMode
+function sendLockUpdate(newLockMode){
+
+}
+
 
 window.addEventListener('DOMContentLoaded', (event) => {
     console.log("DOM LOADED")
@@ -25,9 +30,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
     historyDiv.style.display = "none"
     statusDiv.style.display = "none"
 
-    let currentLockStatus = 0
-    let currentDoorStatus = 0
-
+    let currentLockStatus = {
+        UNLOCKED: 0,
+        SOFT: 1,
+        HARD: 2,
+    };
 
     //  Home button handling
     homeButton.addEventListener("click", () => {
@@ -70,29 +77,42 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 switch (i) {
                     case 0:     // OPEN
 
+                        console.log("OPEN")
                         if (currentLockStatus !== 0) {
                             lockImage.src = "img/lockOpenAnim.png"
-                            modeContainer.innerHTML ="Current Mode: Open"
+                            modeContainer.innerHTML ="Current Mode: UNLOCKED"
                             currentLockStatus = 0
+
                         }
+                        sendLockUpdate(currentLockStatus)
                         break;
                     case 1:     // SOFT
 
-                        if (currentLockStatus === 0) {
-                            lockImage.src = "img/lockCloseAnim.png"
-                            modeContainer.innerHTML ="Current Mode: Soft Lock"
-                            currentLockStatus = 1
-                        }
-                        break;
-                    case 2:     // HARD
+                        console.log("SOFT")
 
                         if (currentLockStatus === 0) {
                             lockImage.src = "img/lockCloseAnim.png"
-                            modeContainer.innerHTML ="Current Mode: Hard Lock"
+                            currentLockStatus = 1
+                        }
+                        else if (currentLockStatus === 2) {
+                            currentLockStatus = 1
+                        }
+                        modeContainer.innerHTML ="Current Mode: SOFT"
+                        sendLockUpdate(currentLockStatus)
+                        break;
+                    case 2:     // HARD
+
+                        console.log("HARD")
+
+                        if (currentLockStatus === 0) {
+                            lockImage.src = "img/lockCloseAnim.png"
+
                             currentLockStatus = 2
                         } else if (currentLockStatus === 1) {
-                            currentLockStatus = 2
+                            currentLockStatus =  2
                         }
+                        modeContainer.innerHTML ="Current Mode: HARD"
+                        sendLockUpdate(currentLockStatus)
                         break;
                 }
 
@@ -100,29 +120,5 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 
-
-    changeButton.addEventListener("click", function () {
-        console.log("status changed")
-
-        switch (currentDoorStatus) {
-            case 0:     // OPEN
-                    doorImage.src = "img/NewDoorOpen.png"
-                    statusContainer.innerHTML = "Current Status: Open"
-                    console.log("open now")
-                    currentDoorStatus = 1
-
-                break;
-            case 1:     // CLOSED
-
-                doorImage.src = "img/NewDoorClosed.png"
-                statusContainer.innerHTML = "Current Status: Closed"
-                console.log("closed now")
-                currentDoorStatus = 0
-                break;
-
-        }
-
-
-    });
 
 });

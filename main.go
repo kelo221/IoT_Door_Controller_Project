@@ -1,41 +1,30 @@
 package main
 
 import (
-	"fmt"
 	"google.golang.org/protobuf/runtime/protoimpl"
-	"net"
 )
 
 func main() {
 
-	doorStatus := Lock{
+	//	The server sends out the lock status and if a door has to be opened
+	tcpPacketOut := LOCK_STATUS{
 		state:         protoimpl.MessageState{},
 		sizeCache:     0,
 		unknownFields: nil,
 		DoorOpenInQue: false,
-		LockStatus:    Lock_UNLOCKED,
+		LockStatus:    LOCK_STATUS_UNLOCKED,
 	}
 
-	go tcpListenerLoop(&doorStatus)
+	//	The server receives a package from the embedded device, which contains the RFID data only.
+	tcpPacketIn := RFID_MESSAGE{
+		state:         protoimpl.MessageState{},
+		sizeCache:     0,
+		unknownFields: nil,
+		RFID_MESSAGE:  "",
+	}
+
+	go tcpListenerLoop(&tcpPacketIn)
 	handleDatabase()
 	createAccounts()
-	handleHTTP(&doorStatus)
-}
-
-func tcpListenerLoop(doorStatus *Lock) {
-
-	listen, err := net.Listen("tcp", ":8081")
-	if err != nil {
-		panic(err)
-	}
-
-	for {
-		conn, err := listen.Accept()
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			go getTpcPackage(conn, doorStatus)
-		}
-	}
-
+	handleHTTP(&tcpPacketOut)
 }

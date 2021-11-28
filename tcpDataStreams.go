@@ -7,7 +7,8 @@ import (
 	"net"
 )
 
-func getTpcPackage(conn net.Conn, container *Lock) {
+// TODO maybe move functionality here instead of passing a pointer
+func getTpcPackage(conn net.Conn, container *RFID_MESSAGE) {
 
 	defer func(conn net.Conn) {
 		err := conn.Close()
@@ -29,7 +30,7 @@ func getTpcPackage(conn net.Conn, container *Lock) {
 				break
 			}
 		} else {
-			newMessage := Lock{}
+			newMessage := RFID_MESSAGE{}
 			err = proto.Unmarshal(result.Bytes(), &newMessage)
 			if err != nil {
 				panic(err)

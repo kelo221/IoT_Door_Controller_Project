@@ -9,7 +9,10 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/session"
 	_ "github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/template/html"
+	"google.golang.org/protobuf/proto"
 	"log"
+	"net"
+	"strconv"
 	"time"
 )
 
@@ -18,7 +21,7 @@ type userData struct {
 	Password string `json:"password" xml:"password" form:"password"`
 }
 
-func handleHTTP(doorStatus *Lock) {
+func handleHTTP(lockMode *LOCK_STATUS) {
 
 	engine := html.New("./views", ".html")
 	app := fiber.New(fiber.Config{
@@ -54,7 +57,7 @@ func handleHTTP(doorStatus *Lock) {
 			fmt.Println("success")
 			return c.Render("index", fiber.Map{
 				"User": username,
-				"Mode": doorStatus.GetLockStatus(),
+				"Mode": lockMode.GetLockStatus(),
 			})
 		}
 		fmt.Println("not logged in")
@@ -93,11 +96,28 @@ func handleHTTP(doorStatus *Lock) {
 	})
 
 	///TODO send only when session is correct
+	app.Put("/updateLock/:lockMode", func(c *fiber.Ctx) error {
+
+		newLockMode := c.Params("lockMode")
+
+		i, err := strconv.Atoi(newLockMode)
+		if err != nil {
+			// handle error
+			fmt.Println(err)
+			return c.SendStatus(400)
+		}
+
+		if i >= 0 && i <= 3 {
+			lockMode.LockStatus = LOCK_STATUSLock(i)
+			tcpSendPackage(lockMode)
+			return c.SendStatus(200)
+		}
+		return c.SendStatus(400)
+
+	})
+
+	///TODO send only when session is correct
 	app.Get("/statistic/modeChanged", func(c *fiber.Ctx) error {
-		//Statistics
-		//when open?(time/date)
-		//mode change? (locked status)
-		//get chip info? (who opened?)
 
 		return c.Send(
 
@@ -111,10 +131,6 @@ func handleHTTP(doorStatus *Lock) {
 	})
 
 	app.Get("/statistic/keycardUsed", func(c *fiber.Ctx) error {
-		//Statistics
-		//when open?(time/date)
-		//mode change? (locked status)
-		//get chip info? (who opened?)
 
 		return c.Send(
 
@@ -127,23 +143,44 @@ func handleHTTP(doorStatus *Lock) {
 		)
 	})
 
-	app.Get("/doorData", func(c *fiber.Ctx) error {
-
-		//	fmt.Println(doorStatus.GetLockStatus())
-		//	fmt.Println(doorStatus.GetDoorIsOpen())
-
-		//	protojson.Marshal should be used, not sure why is not working
-
-		return c.Send(
-
-			[]byte("[" +
-				"{\"lockState\":\" " + (doorStatus.GetLockStatus()).String() + "\"  }" +
-				"]"),
-		)
-	})
-
 	err := app.Listen(":8080")
 	if err != nil {
 		panic(err)
 	}
+}
+
+func tcpListenerLoop(rfidMessage *RFID_MESSAGE) {
+
+	listen, err := net.Listen("tcp", ":8081")
+	if err != nil {
+		panic(err)
+	}
+
+	for {
+		conn, err := listen.Accept()
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			go getTpcPackage(conn, rfidMessage)
+		}
+	}
+
+}
+
+func tcpSendPackage(lockMode *LOCK_STATUS) {
+
+	//fmt.Println("check that data is correct: ", lockMode.GetLockStatus())
+
+	data, err := proto.Marshal(lockMode)
+	if err != nil {
+		log.Fatal("marshall error", err)
+
+	}
+	conn, err := net.DialTimeout("tcp", "localhost:8082", time.Second*30)
+	if err != nil {
+		fmt.Printf("connect failed, err : %v\n", err.Error())
+		return
+	}
+
+	_, err = conn.Write(data)
 }
