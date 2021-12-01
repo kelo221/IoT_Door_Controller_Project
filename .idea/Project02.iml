@@ -8,5 +8,6 @@
     <orderEntry type="library" name="97f2692db1" level="application" />
     <orderEntry type="library" name="97f2692db1" level="application" />
     <orderEntry type="library" name="bulma-tooltip" level="application" />
+    <orderEntry type="library" name="axios" level="application" />
   </component>
 </module>

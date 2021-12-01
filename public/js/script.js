@@ -21,7 +21,7 @@ function generateTable() {
 
     axios({
         method: "get",
-        url: "http://localhost:8080/userLogs",
+        url: "http://localhost:8080/statistic/modeChanged",
         data: null,
     })
         .then(function (response) {
@@ -89,7 +89,7 @@ function generateTable() {
 
 
 // clear database when log out
-async function clearDB() {
+async function logoutFunction() {
     try {
         return await axios({
             url: 'http://localhost:8080/clearDatabase',
@@ -109,23 +109,19 @@ async function clearDB() {
 window.addEventListener('DOMContentLoaded', (event) => {
     console.log("DOM LOADED")
     const lockImage = document.getElementById("lockImage")
-    // const doorImage = document.getElementById("doorImage")
     const lockRadio = document.getElementsByName("mode")
     const applyButton = document.getElementById("applyButton")
-    //const changeButton = document.getElementById("changeButton")
     const modeContainer = document.getElementById("modeContainer")
-    // const statusContainer = document.getElementById("statusContainer")
 
     const homeButton = document.getElementById("homeButton")
     const historyButton = document.getElementById("historyButton")
 
     const logoutButton = document.getElementById("logoutButton")
 
-    //const statusButton = document.getElementById("statusButton")
 
     const homeDiv = document.getElementById("homeContent")
     const historyDiv = document.getElementById("historyContent")
-    //const statusDiv = document.getElementById("statusContent")
+
 
     homeDiv.style.display = "block"
     historyDiv.style.display = "none"
@@ -142,7 +138,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
         console.log("homeButton clicked.")
         homeDiv.style.display = "block"
         historyDiv.style.display = "none"
-        statusDiv.style.display = "none"
     });
 
 
@@ -151,15 +146,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
         console.log("historyButton clicked.")
         homeDiv.style.display = "none"
         historyDiv.style.display = "block"
-        statusDiv.style.display = "none"
 
     });
 
 
     // Database button
-    logout.addEventListener("click", () => {
-        console.log("database button pressed")
-        clearDB().then(r => console.log(r))
+    logoutButton.addEventListener("click", () => {
+        console.log("logout button pressed")
+        logoutFunction().then(r => console.log(r))
     });
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{97f2692db1, bulma-tooltip}" />
+    <file url="PROJECT" libraries="{97f2692db1, axios, bulma-tooltip}" />
   </component>
 </project>
