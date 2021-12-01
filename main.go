@@ -26,5 +26,6 @@ func main() {
 	go tcpListenerLoop(&tcpPacketIn)
 	handleDatabase()
 	createAccounts()
+	createRDIF()
 	handleHTTP(&tcpPacketOut)
 }

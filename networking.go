@@ -116,6 +116,11 @@ func handleHTTP(lockMode *LOCK_STATUS) {
 
 	})
 
+	///TODO ---------------------------------------------
+	app.Post("/logout", func(c *fiber.Ctx) error {
+		return c.SendStatus(200)
+	})
+
 	///TODO send only when session is correct
 	app.Get("/statistic/modeChanged", func(c *fiber.Ctx) error {
 
@@ -131,6 +136,10 @@ func handleHTTP(lockMode *LOCK_STATUS) {
 	})
 
 	app.Get("/statistic/keycardUsed", func(c *fiber.Ctx) error {
+
+		/// TODO
+		///	ask database if hashed key is matched
+		///	if matches get the username and time, store them in a database
 
 		return c.Send(
 
