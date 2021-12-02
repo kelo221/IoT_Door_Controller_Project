@@ -4,6 +4,12 @@ import (
 	"google.golang.org/protobuf/runtime/protoimpl"
 )
 
+const (
+	embeddedAddress = "localhost"
+	embeddedPort    = "8082"
+	tcpListenPort   = "8081"
+)
+
 func main() {
 
 	//	The server sends out the lock status and if a door has to be opened
@@ -23,7 +29,7 @@ func main() {
 			RFID_CODE:     "",
 		}
 	*/
-	go tcpListenerLoop()
+	go tcpListenerLoop(&tcpPacketOut)
 	handleDatabase()
 	createAccounts()
 	createRDIF()

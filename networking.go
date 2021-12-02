@@ -139,10 +139,6 @@ func handleHTTP(lockMode *Door_Request) {
 
 	app.Get("/statistic/keycardUsed", func(c *fiber.Ctx) error {
 
-		/// TODO
-		///	ask database if hashed key is matched
-		///	if matches get the username and time, store them in a database
-
 		return c.Send(
 
 			[]byte("[" +
@@ -160,9 +156,9 @@ func handleHTTP(lockMode *Door_Request) {
 	}
 }
 
-func tcpListenerLoop() {
+func tcpListenerLoop(lockMode *Door_Request) {
 
-	listen, err := net.Listen("tcp", ":8081")
+	listen, err := net.Listen("tcp", ":"+tcpListenPort)
 	if err != nil {
 		panic(err)
 	}
@@ -217,8 +213,26 @@ func tcpListenerLoop() {
 							"    time: DATE_NOW()" +
 							"  } INTO DOOR_HISTORY OPTIONS { ignoreErrors: true }")
 
+						lockMode.DoorRequest = LOCK_STATUS_APPROVED
+					} else {
+						lockMode.DoorRequest = LOCK_STATUS_DISAPPROVED
 					}
 
+					data, err := proto.Marshal(lockMode)
+					if err != nil {
+						log.Fatal("marshall error", err)
+
+					}
+
+					conn, err := net.DialTimeout("tcp", embeddedAddress+":"+embeddedPort, time.Second*30)
+					if err != nil {
+						fmt.Printf("connect failed, err : %v\n", err.Error())
+						return
+					}
+
+					_, err = conn.Write(data)
+
+					lockMode.DoorRequest = LOCK_STATUS_NO_REQUEST
 				}
 				result.Reset()
 			}
@@ -236,7 +250,7 @@ func tcpSendPackage(lockMode *Door_Request) {
 		log.Fatal("marshall error", err)
 
 	}
-	conn, err := net.DialTimeout("tcp", "localhost:8082", time.Second*30)
+	conn, err := net.DialTimeout("tcp", embeddedAddress+":"+embeddedPort, time.Second*30)
 	if err != nil {
 		fmt.Printf("connect failed, err : %v\n", err.Error())
 		return

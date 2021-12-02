@@ -174,6 +174,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             modeContainer.innerHTML ="Current Mode: UNLOCKED"
                             currentLockStatus = 0
 
+                            console.log("changed")
                         }
                         sendLockUpdate(currentLockStatus)
                         break;
@@ -184,9 +185,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         if (currentLockStatus === 0) {
                             lockImage.src = "img/lockCloseAnim.png"
                             currentLockStatus = 1
+                            console.log("changed")
                         }
                         else if (currentLockStatus === 2) {
                             currentLockStatus = 1
+                            console.log("changed")
                         }
                         modeContainer.innerHTML ="Current Mode: SOFT"
                         sendLockUpdate(currentLockStatus)
@@ -198,9 +201,13 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         if (currentLockStatus === 0) {
                             lockImage.src = "img/lockCloseAnim.png"
 
+                            console.log("changed")
+
                             currentLockStatus = 2
                         } else if (currentLockStatus === 1) {
                             currentLockStatus =  2
+
+                            console.log("changed")
                         }
                         modeContainer.innerHTML ="Current Mode: HARD"
                         sendLockUpdate(currentLockStatus)
@@ -212,40 +219,3 @@ window.addEventListener('DOMContentLoaded', (event) => {
     });
 
 });
-
-
-function sendUserSettings(value = 0) {
-    let json;
-
-    console.log("sending user settings")
-
-    if (UNLOCKED) {
-        json = JSON.stringify({currentLockStatus: 0});
-    }
-    if (SOFT) {
-        json = JSON.stringify({currentLockStatus: 1});
-    }
-
-    else {
-        json = JSON.stringify({currentLockStatus: 2});
-    }
-
-
-    axios({
-        method: "post",
-        url: "http://localhost:8080/getUserSettings",
-        data: json,
-        headers: {
-            "Content-Type": "application/json",
-        },
-
-    })
-        .then(function (response) {
-            //handle success
-            console.log(response);
-        })
-        .catch(function (response) {
-            //handle error
-            console.log(response);
-        });
-}
