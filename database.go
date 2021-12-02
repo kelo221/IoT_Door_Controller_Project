@@ -77,6 +77,18 @@ func handleDatabase() {
 		}
 	}
 
+	// Create a collection for lock changes
+	userCol, err = db.Collection(nil, "LOCK_HISTORY")
+	if err != nil {
+		fmt.Println(err, "creating new...")
+		ctx := context.Background()
+		options := &driver.CreateCollectionOptions{ /* ... */ }
+		userCol, err = db.CreateCollection(ctx, "LOCK_HISTORY", options)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
 }
 
 func createAccounts() {

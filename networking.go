@@ -73,12 +73,12 @@ func handleHTTP(lockMode *Door_Request) {
 			log.Println(err)
 		}
 
-		salt := []byte("salt")
 		p := new(userData)
 		if err := c.BodyParser(p); err != nil {
 			return err
 		}
 
+		salt := []byte("salt")
 		passwordHash := hex.EncodeToString(HashPassword([]byte(p.Password), salt))
 		expectedPasswordHash := aqlToString("FOR r IN DOOR_LOGIN FILTER r.username == \"" + p.Username + "\" RETURN r.hash")
 
@@ -100,21 +100,51 @@ func handleHTTP(lockMode *Door_Request) {
 	///TODO send only when session is correct
 	app.Put("/updateLock/:lockMode", func(c *fiber.Ctx) error {
 
-		newLockMode := c.Params("lockMode")
-
-		i, err := strconv.Atoi(newLockMode)
+		sess, err := store.Get(c)
 		if err != nil {
-			// handle error
-			fmt.Println(err)
-			return c.SendStatus(400)
+			log.Println(err)
 		}
 
-		if i >= 0 && i <= 3 {
-			lockMode.LockStatus = LOCK_STATUSLock(i)
-			tcpSendPackage(lockMode)
-			return c.SendStatus(200)
+		username := sess.Get("Username")
+		isLogin := username != nil
+
+		if isLogin {
+
+			newLockMode := c.Params("lockMode")
+
+			i, err := strconv.Atoi(newLockMode)
+			if err != nil {
+				// handle error
+				fmt.Println(err)
+				return c.SendStatus(400)
+			}
+
+			if i >= 0 && i <= 3 {
+				lockMode.LockStatus = LOCK_STATUSLock(i)
+				tcpSendPackage(lockMode)
+
+				p := new(userData)
+				if err := c.BodyParser(p); err != nil {
+					return err
+				}
+
+				aqlNoReturn(
+					"INSERT {" +
+						"   name: " +
+						p.Username +
+						"," +
+						"    time: DATE_NOW()" +
+						"  } INTO LOCK_HISTORY OPTIONS { ignoreErrors: true }")
+
+				fmt.Println("added to lock history DB")
+
+				return c.SendStatus(200)
+			}
+			return c.SendStatus(400)
+
 		}
-		return c.SendStatus(400)
+		fmt.Println("not logged in")
+		return c.Redirect("/")
 
 	})
 
