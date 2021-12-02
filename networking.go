@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/subtle"
 	"encoding/hex"
 	"fmt"
@@ -10,6 +11,7 @@ import (
 	_ "github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/template/html"
 	"google.golang.org/protobuf/proto"
+	"io"
 	"log"
 	"net"
 	"strconv"
@@ -21,7 +23,7 @@ type userData struct {
 	Password string `json:"password" xml:"password" form:"password"`
 }
 
-func handleHTTP(lockMode *LOCK_STATUS) {
+func handleHTTP(lockMode *Door_Request) {
 
 	engine := html.New("./views", ".html")
 	app := fiber.New(fiber.Config{
@@ -158,7 +160,7 @@ func handleHTTP(lockMode *LOCK_STATUS) {
 	}
 }
 
-func tcpListenerLoop(rfidMessage *RFID_MESSAGE) {
+func tcpListenerLoop() {
 
 	listen, err := net.Listen("tcp", ":8081")
 	if err != nil {
@@ -170,13 +172,62 @@ func tcpListenerLoop(rfidMessage *RFID_MESSAGE) {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			go getTpcPackage(conn, rfidMessage)
+
+			defer func(conn net.Conn) {
+				err := conn.Close()
+				if err != nil {
+
+				}
+			}(conn)
+
+			result := bytes.NewBuffer(nil)
+			var buf [1024]byte
+			for {
+				n, err := conn.Read(buf[0:])
+				result.Write(buf[0:n])
+				if err != nil {
+					if err == io.EOF {
+						continue
+					} else {
+						//	fmt.Println(err)
+						break
+					}
+				} else {
+					newMessage := RFID_MESSAGE{}
+					err = proto.Unmarshal(result.Bytes(), &newMessage)
+					if err != nil {
+						panic(err)
+					}
+					fmt.Println(newMessage.GetRFID_CODE())
+
+					salt := []byte("salt")
+
+					rfidHash := hex.EncodeToString(HashPassword([]byte(newMessage.GetRFID_CODE()), salt))
+					expectedHash := aqlToString("FOR doc IN DOOR_RFID  FILTER doc.HASHED_RFID == \"" + rfidHash + "\"  RETURN doc.HASHED_RFID")
+
+					hashFound := subtle.ConstantTimeCompare([]byte(rfidHash[:]), []byte((expectedHash[:]))) == 1
+
+					if hashFound {
+						fmt.Println("match")
+
+						aqlNoReturn("FOR doc IN DOOR_RFID" +
+							" FILTER doc.HASHED_RFID == \"" + rfidHash + "\"" +
+							"   INSERT {" +
+							"   name: doc.RFID_OWNER," +
+							"    time: DATE_NOW()" +
+							"  } INTO DOOR_HISTORY OPTIONS { ignoreErrors: true }")
+
+					}
+
+				}
+				result.Reset()
+			}
 		}
 	}
 
 }
 
-func tcpSendPackage(lockMode *LOCK_STATUS) {
+func tcpSendPackage(lockMode *Door_Request) {
 
 	//fmt.Println("check that data is correct: ", lockMode.GetLockStatus())
 

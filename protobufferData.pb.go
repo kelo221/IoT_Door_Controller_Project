@@ -20,6 +20,55 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type LOCK_STATUSOpenRequest int32
+
+const (
+	LOCK_STATUS_NO_REQUEST  LOCK_STATUSOpenRequest = 0
+	LOCK_STATUS_APPROVED    LOCK_STATUSOpenRequest = 1
+	LOCK_STATUS_DISAPPROVED LOCK_STATUSOpenRequest = 2
+)
+
+// Enum value maps for LOCK_STATUSOpenRequest.
+var (
+	LOCK_STATUSOpenRequest_name = map[int32]string{
+		0: "NO_REQUEST",
+		1: "APPROVED",
+		2: "DISAPPROVED",
+	}
+	LOCK_STATUSOpenRequest_value = map[string]int32{
+		"NO_REQUEST":  0,
+		"APPROVED":    1,
+		"DISAPPROVED": 2,
+	}
+)
+
+func (x LOCK_STATUSOpenRequest) Enum() *LOCK_STATUSOpenRequest {
+	p := new(LOCK_STATUSOpenRequest)
+	*p = x
+	return p
+}
+
+func (x LOCK_STATUSOpenRequest) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (LOCK_STATUSOpenRequest) Descriptor() protoreflect.EnumDescriptor {
+	return file_protobufferData_proto_enumTypes[0].Descriptor()
+}
+
+func (LOCK_STATUSOpenRequest) Type() protoreflect.EnumType {
+	return &file_protobufferData_proto_enumTypes[0]
+}
+
+func (x LOCK_STATUSOpenRequest) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use LOCK_STATUSOpenRequest.Descriptor instead.
+func (LOCK_STATUSOpenRequest) EnumDescriptor() ([]byte, []int) {
+	return file_protobufferData_proto_rawDescGZIP(), []int{0, 0}
+}
+
 type LOCK_STATUSLock int32
 
 const (
@@ -53,11 +102,11 @@ func (x LOCK_STATUSLock) String() string {
 }
 
 func (LOCK_STATUSLock) Descriptor() protoreflect.EnumDescriptor {
-	return file_protobufferData_proto_enumTypes[0].Descriptor()
+	return file_protobufferData_proto_enumTypes[1].Descriptor()
 }
 
 func (LOCK_STATUSLock) Type() protoreflect.EnumType {
-	return &file_protobufferData_proto_enumTypes[0]
+	return &file_protobufferData_proto_enumTypes[1]
 }
 
 func (x LOCK_STATUSLock) Number() protoreflect.EnumNumber {
@@ -66,20 +115,20 @@ func (x LOCK_STATUSLock) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use LOCK_STATUSLock.Descriptor instead.
 func (LOCK_STATUSLock) EnumDescriptor() ([]byte, []int) {
-	return file_protobufferData_proto_rawDescGZIP(), []int{0, 0}
+	return file_protobufferData_proto_rawDescGZIP(), []int{0, 1}
 }
 
-type LOCK_STATUS struct {
+type Door_Request struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	DoorOpenInQue bool            `protobuf:"varint,1,opt,name=doorOpenInQue,proto3" json:"doorOpenInQue,omitempty"`
-	LockStatus    LOCK_STATUSLock `protobuf:"varint,2,opt,name=lockStatus,proto3,enum=LOCK_STATUSLock" json:"lockStatus,omitempty"`
+	DoorRequest LOCK_STATUSOpenRequest `protobuf:"varint,1,opt,name=doorRequest,proto3,enum=LOCK_STATUSOpenRequest" json:"doorRequest,omitempty"`
+	LockStatus  LOCK_STATUSLock        `protobuf:"varint,2,opt,name=lockStatus,proto3,enum=LOCK_STATUSLock" json:"lockStatus,omitempty"`
 }
 
-func (x *LOCK_STATUS) Reset() {
-	*x = LOCK_STATUS{}
+func (x *Door_Request) Reset() {
+	*x = Door_Request{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_protobufferData_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -87,13 +136,13 @@ func (x *LOCK_STATUS) Reset() {
 	}
 }
 
-func (x *LOCK_STATUS) String() string {
+func (x *Door_Request) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LOCK_STATUS) ProtoMessage() {}
+func (*Door_Request) ProtoMessage() {}
 
-func (x *LOCK_STATUS) ProtoReflect() protoreflect.Message {
+func (x *Door_Request) ProtoReflect() protoreflect.Message {
 	mi := &file_protobufferData_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -105,19 +154,19 @@ func (x *LOCK_STATUS) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LOCK_STATUS.ProtoReflect.Descriptor instead.
-func (*LOCK_STATUS) Descriptor() ([]byte, []int) {
+// Deprecated: Use Door_Request.ProtoReflect.Descriptor instead.
+func (*Door_Request) Descriptor() ([]byte, []int) {
 	return file_protobufferData_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *LOCK_STATUS) GetDoorOpenInQue() bool {
+func (x *Door_Request) GetDoorRequest() LOCK_STATUSOpenRequest {
 	if x != nil {
-		return x.DoorOpenInQue
+		return x.DoorRequest
 	}
-	return false
+	return LOCK_STATUS_NO_REQUEST
 }
 
-func (x *LOCK_STATUS) GetLockStatus() LOCK_STATUSLock {
+func (x *Door_Request) GetLockStatus() LOCK_STATUSLock {
 	if x != nil {
 		return x.LockStatus
 	}
@@ -129,7 +178,7 @@ type RFID_MESSAGE struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	RFID_MESSAGE string `protobuf:"bytes,1,opt,name=RFID_MESSAGE,json=RDIFCode,proto3" json:"RFID_MESSAGE,omitempty"`
+	RFID_CODE string `protobuf:"bytes,1,opt,name=RFID_CODE,json=RFIDCODE,proto3" json:"RFID_CODE,omitempty"`
 }
 
 func (x *RFID_MESSAGE) Reset() {
@@ -164,9 +213,9 @@ func (*RFID_MESSAGE) Descriptor() ([]byte, []int) {
 	return file_protobufferData_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *RFID_MESSAGE) GetRDIF_Code() string {
+func (x *RFID_MESSAGE) GetRFID_CODE() string {
 	if x != nil {
-		return x.RFID_MESSAGE
+		return x.RFID_CODE
 	}
 	return ""
 }
@@ -175,20 +224,25 @@ var File_protobufferData_proto protoreflect.FileDescriptor
 
 var file_protobufferData_proto_rawDesc = []byte{
 	0x0a, 0x15, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x66, 0x65, 0x72, 0x44, 0x61, 0x74,
-	0x61, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x90, 0x01, 0x0a, 0x0b, 0x4c, 0x4f, 0x43, 0x4b,
-	0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x12, 0x24, 0x0a, 0x0d, 0x64, 0x6f, 0x6f, 0x72, 0x4f,
-	0x70, 0x65, 0x6e, 0x49, 0x6e, 0x51, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0d,
-	0x64, 0x6f, 0x6f, 0x72, 0x4f, 0x70, 0x65, 0x6e, 0x49, 0x6e, 0x51, 0x75, 0x65, 0x12, 0x31, 0x0a,
-	0x0a, 0x6c, 0x6f, 0x63, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x0e, 0x32, 0x11, 0x2e, 0x4c, 0x4f, 0x43, 0x4b, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x2e,
-	0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x0a, 0x6c, 0x6f, 0x63, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,
-	0x22, 0x28, 0x0a, 0x04, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x0c, 0x0a, 0x08, 0x55, 0x4e, 0x4c, 0x4f,
-	0x43, 0x4b, 0x45, 0x44, 0x10, 0x00, 0x12, 0x08, 0x0a, 0x04, 0x53, 0x4f, 0x46, 0x54, 0x10, 0x01,
-	0x12, 0x08, 0x0a, 0x04, 0x48, 0x41, 0x52, 0x44, 0x10, 0x02, 0x22, 0x2b, 0x0a, 0x0c, 0x52, 0x44,
-	0x49, 0x46, 0x5f, 0x4d, 0x45, 0x53, 0x53, 0x41, 0x47, 0x45, 0x12, 0x1b, 0x0a, 0x09, 0x52, 0x44,
-	0x49, 0x46, 0x5f, 0x43, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x52,
-	0x44, 0x49, 0x46, 0x43, 0x6f, 0x64, 0x65, 0x42, 0x07, 0x5a, 0x05, 0x2e, 0x6d, 0x61, 0x69, 0x6e,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xe4, 0x01, 0x0a, 0x0b, 0x4c, 0x4f, 0x43, 0x4b,
+	0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x12, 0x3a, 0x0a, 0x0b, 0x64, 0x6f, 0x6f, 0x72, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x18, 0x2e, 0x4c,
+	0x4f, 0x43, 0x4b, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x2e, 0x6f, 0x70, 0x65, 0x6e, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x0b, 0x64, 0x6f, 0x6f, 0x72, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x31, 0x0a, 0x0a, 0x6c, 0x6f, 0x63, 0x6b, 0x53, 0x74, 0x61, 0x74, 0x75,
+	0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x11, 0x2e, 0x4c, 0x4f, 0x43, 0x4b, 0x5f, 0x53,
+	0x54, 0x41, 0x54, 0x55, 0x53, 0x2e, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x0a, 0x6c, 0x6f, 0x63, 0x6b,
+	0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x3c, 0x0a, 0x0b, 0x6f, 0x70, 0x65, 0x6e, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x0a, 0x4e, 0x4f, 0x5f, 0x52, 0x45, 0x51, 0x55,
+	0x45, 0x53, 0x54, 0x10, 0x00, 0x12, 0x0c, 0x0a, 0x08, 0x41, 0x50, 0x50, 0x52, 0x4f, 0x56, 0x45,
+	0x44, 0x10, 0x01, 0x12, 0x0f, 0x0a, 0x0b, 0x44, 0x49, 0x53, 0x41, 0x50, 0x50, 0x52, 0x4f, 0x56,
+	0x45, 0x44, 0x10, 0x02, 0x22, 0x28, 0x0a, 0x04, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x0c, 0x0a, 0x08,
+	0x55, 0x4e, 0x4c, 0x4f, 0x43, 0x4b, 0x45, 0x44, 0x10, 0x00, 0x12, 0x08, 0x0a, 0x04, 0x53, 0x4f,
+	0x46, 0x54, 0x10, 0x01, 0x12, 0x08, 0x0a, 0x04, 0x48, 0x41, 0x52, 0x44, 0x10, 0x02, 0x22, 0x2b,
+	0x0a, 0x0c, 0x52, 0x46, 0x49, 0x44, 0x5f, 0x4d, 0x45, 0x53, 0x53, 0x41, 0x47, 0x45, 0x12, 0x1b,
+	0x0a, 0x09, 0x52, 0x46, 0x49, 0x44, 0x5f, 0x43, 0x4f, 0x44, 0x45, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x08, 0x52, 0x46, 0x49, 0x44, 0x43, 0x4f, 0x44, 0x45, 0x42, 0x07, 0x5a, 0x05, 0x2e,
+	0x6d, 0x61, 0x69, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -203,20 +257,22 @@ func file_protobufferData_proto_rawDescGZIP() []byte {
 	return file_protobufferData_proto_rawDescData
 }
 
-var file_protobufferData_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_protobufferData_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_protobufferData_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_protobufferData_proto_goTypes = []interface{}{
-	(LOCK_STATUSLock)(0), // 0: LOCK_STATUS.lock
-	(*LOCK_STATUS)(nil),  // 1: LOCK_STATUS
-	(*RFID_MESSAGE)(nil), // 2: RFID_MESSAGE
+	(LOCK_STATUSOpenRequest)(0), // 0: Door_Request.openRequest
+	(LOCK_STATUSLock)(0),        // 1: Door_Request.lock
+	(*Door_Request)(nil),        // 2: Door_Request
+	(*RFID_MESSAGE)(nil),        // 3: RFID_MESSAGE
 }
 var file_protobufferData_proto_depIdxs = []int32{
-	0, // 0: LOCK_STATUS.lockStatus:type_name -> LOCK_STATUS.lock
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // 0: Door_Request.doorRequest:type_name -> Door_Request.openRequest
+	1, // 1: Door_Request.lockStatus:type_name -> Door_Request.lock
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_protobufferData_proto_init() }
@@ -226,7 +282,7 @@ func file_protobufferData_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_protobufferData_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LOCK_STATUS); i {
+			switch v := v.(*Door_Request); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -255,7 +311,7 @@ func file_protobufferData_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_protobufferData_proto_rawDesc,
-			NumEnums:      1,
+			NumEnums:      2,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,

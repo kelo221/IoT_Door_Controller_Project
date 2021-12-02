@@ -65,6 +65,18 @@ func handleDatabase() {
 		}
 	}
 
+	// Create a collection for history
+	userCol, err = db.Collection(nil, "DOOR_HISTORY")
+	if err != nil {
+		fmt.Println(err, "creating new...")
+		ctx := context.Background()
+		options := &driver.CreateCollectionOptions{ /* ... */ }
+		userCol, err = db.CreateCollection(ctx, "DOOR_HISTORY", options)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
 }
 
 func createAccounts() {
@@ -79,8 +91,8 @@ func createAccounts() {
 func createRDIF() {
 	salt := []byte("salt")
 
-	aqlNoReturn("UPSERT { RDIF_OWNER: 'User' } " +
-		"INSERT { RDIF_OWNER: 'User', HASHED_RFID: '" + hex.EncodeToString(HashPassword([]byte("F7 20 05 3A"), salt)) + "', dateCreated: DATE_NOW() } " +
+	aqlNoReturn("UPSERT { RFID_OWNER: 'User' } " +
+		"INSERT { RFID_OWNER: 'User', HASHED_RFID: '" + hex.EncodeToString(HashPassword([]byte("F7 20 05 3A"), salt)) + "', dateCreated: DATE_NOW() } " +
 		"UPDATE {} IN DOOR_RFID")
 
 }

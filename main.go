@@ -7,23 +7,23 @@ import (
 func main() {
 
 	//	The server sends out the lock status and if a door has to be opened
-	tcpPacketOut := LOCK_STATUS{
+	tcpPacketOut := Door_Request{
 		state:         protoimpl.MessageState{},
 		sizeCache:     0,
 		unknownFields: nil,
-		DoorOpenInQue: false,
+		DoorRequest:   LOCK_STATUS_NO_REQUEST,
 		LockStatus:    LOCK_STATUS_UNLOCKED,
 	}
 
-	//	The server receives a package from the embedded device, which contains the RFID data only.
-	tcpPacketIn := RFID_MESSAGE{
-		state:         protoimpl.MessageState{},
-		sizeCache:     0,
-		unknownFields: nil,
-		RFID_MESSAGE:  "",
-	}
-
-	go tcpListenerLoop(&tcpPacketIn)
+	/*	//	The server receives a package from the embedded device, which contains the RFID data only.
+		tcpPacketIn := RFID_MESSAGE{
+			state:         protoimpl.MessageState{},
+			sizeCache:     0,
+			unknownFields: nil,
+			RFID_CODE:     "",
+		}
+	*/
+	go tcpListenerLoop()
 	handleDatabase()
 	createAccounts()
 	createRDIF()
