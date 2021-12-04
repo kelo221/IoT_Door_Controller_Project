@@ -130,7 +130,6 @@ func aqlToString(query string) string {
 	var result string
 
 	ctx := context.Background()
-	//query = "FOR Speed IN IOT_DATA_SENSOR RETURN Speed"
 	cursor, err := db.Query(ctx, query, nil)
 	if err != nil {
 		// handle error
@@ -148,9 +147,45 @@ func aqlToString(query string) string {
 		} else if err2 != nil {
 			fmt.Println(err2)
 		}
-
-		//fmt.Println(result)
 	}
 
 	return result
+}
+
+type logData struct {
+	Name string `json:"name,omitempty"`
+	Time int    `json:"time,omitempty"`
+}
+
+func aqlJSON(query string) []logData {
+
+	var dataPayload []logData
+
+	ctx := context.Background()
+	//query = "FOR Speed IN IOT_DATA_SENSOR RETURN Speed"
+	cursor, err := db.Query(ctx, query, nil)
+	if err != nil {
+		// handle error
+	}
+	defer func(cursor driver.Cursor) {
+		err3 := cursor.Close()
+		if err3 != nil {
+			fmt.Println(err3)
+		}
+	}(cursor)
+	for {
+		var doc logData
+		_, err2 := cursor.ReadDocument(ctx, &doc)
+		if driver.IsNoMoreDocuments(err2) {
+			break
+		} else if err2 != nil {
+			fmt.Println(err2)
+		}
+		//fmt.Printf("Got doc with key '%s' from query\n", meta.Rev)
+		//fmt.Println(doc)
+		dataPayload = append(dataPayload, doc)
+	}
+
+	return dataPayload
+
 }

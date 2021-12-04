@@ -97,7 +97,6 @@ func handleHTTP(lockMode *Door_Request) {
 		return c.SendStatus(400)
 	})
 
-	///TODO send only when session is correct
 	app.Put("/updateLock/:lockMode", func(c *fiber.Ctx) error {
 
 		sess, err := store.Get(c)
@@ -153,31 +152,41 @@ func handleHTTP(lockMode *Door_Request) {
 		return c.SendStatus(200)
 	})
 
-	///TODO send only when session is correct
-	app.Get("/statistic/modeChanged", func(c *fiber.Ctx) error {
+	app.Get("/statistics/modeChanged", func(c *fiber.Ctx) error {
 
-		return c.Send(
+		sess, err := store.Get(c)
+		if err != nil {
+			log.Println(err)
+		}
 
-			[]byte("[" +
-				"{\"Who\":\"John\", \"When\":1012239724, \"Mode\":\"Soft-Lock\"}," +
-				"{\"Who\":\"Max\", \"When\":1757699363, \"Mode\":\"Hard-Lock\"}," +
-				"{\"Who\":\"Mona\", \"When\":1586899080 , \"Mode\":\"Open\"}," +
-				"{\"Who\":\"Lisa\", \"When\":1327233733, \"Mode\":\"Hard-Lock\"}" +
-				"]"),
-		)
+		username := sess.Get("Username")
+		isLogin := username != nil
+
+		if isLogin {
+
+			return c.JSON(aqlJSON("FOR x IN LOCK_HISTORY RETURN x"))
+		} else {
+			return c.SendStatus(403)
+		}
+
 	})
 
-	app.Get("/statistic/keycardUsed", func(c *fiber.Ctx) error {
+	app.Get("/statistics/keycardUsed", func(c *fiber.Ctx) error {
 
-		return c.Send(
+		sess, err := store.Get(c)
+		if err != nil {
+			log.Println(err)
+		}
 
-			[]byte("[" +
-				"{\"Who\":\"John\", \"When\":1012239724 }," +
-				"{\"Who\":\"Max\", \"When\":1757699363}," +
-				"{\"Who\":\"Mona\", \"When\":1586899080}," +
-				"{\"Who\":\"Lisa\", \"When\":1327233733}" +
-				"]"),
-		)
+		username := sess.Get("Username")
+		isLogin := username != nil
+
+		if isLogin {
+			return c.JSON(aqlJSON("FOR x IN DOOR_HISTORY RETURN x"))
+		} else {
+			return c.SendStatus(403)
+		}
+
 	})
 
 	err := app.Listen(":8080")
@@ -272,8 +281,6 @@ func tcpListenerLoop(lockMode *Door_Request) {
 }
 
 func tcpSendPackage(lockMode *Door_Request) {
-
-	//fmt.Println("check that data is correct: ", lockMode.GetLockStatus())
 
 	data, err := proto.Marshal(lockMode)
 	if err != nil {

@@ -21,7 +21,7 @@ function generateTable() {
 
     axios({
         method: "get",
-        url: "http://localhost:8080/statistic/modeChanged",
+        url: "http://localhost:8080/statistics/modeChanged",
         data: null,
     })
         .then(function (response) {
@@ -92,8 +92,8 @@ function generateTable() {
 async function logoutFunction() {
     try {
         return await axios({
-            url: 'http://localhost:8080/clearDatabase',
-            method: 'Delete',
+            url: 'http://localhost:8080/logout',
+            method: 'Post',
             timeout: 8000,
             headers: {
                 'Content-Type': 'application/json',
@@ -125,13 +125,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     homeDiv.style.display = "block"
     historyDiv.style.display = "none"
-    //statusDiv.style.display = "none"
 
-    let currentLockStatus = {
-        UNLOCKED: 0,
-        SOFT: 1,
-        HARD: 2,
-    };
 
     //  Home button handling
     homeButton.addEventListener("click", () => {
@@ -156,6 +150,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
         logoutFunction().then(r => console.log(r))
     });
 
+
+    let currentLockStatus = {
+        UNLOCKED: 0,
+        SOFT: 1,
+        HARD: 2,
+    };
 
 
     applyButton.addEventListener("click", function () {
