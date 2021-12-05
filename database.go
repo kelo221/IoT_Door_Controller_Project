@@ -153,6 +153,7 @@ func aqlToString(query string) string {
 }
 
 type logData struct {
+	Mode string `json:"mode,omitempty"`
 	Name string `json:"name,omitempty"`
 	Time int    `json:"time,omitempty"`
 }
