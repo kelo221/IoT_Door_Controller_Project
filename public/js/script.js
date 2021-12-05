@@ -87,18 +87,25 @@ function generateTable() {
 
 }
 
-
-// clear database when log out
-async function logoutFunction() {
+async function exampleRequest() {
     try {
-        return await axios({
-            url: 'http://localhost:8080/logout',
-            method: 'Post',
+        let res = await axios({
+            url: 'http://localhost:8080/statistics/keycardUsed',
+            method: 'get',
             timeout: 8000,
             headers: {
                 'Content-Type': 'application/json',
             }
         })
+        if (Object.keys(res.data).length !== 0) {
+
+            //console.log(Object.keys(res.data).length)
+            console.log(res.data)
+                return 0
+        } else {
+            return 0
+        }
+
     } catch (err) {
         console.error(err);
     }
@@ -147,7 +154,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     // Database button
     logoutButton.addEventListener("click", () => {
         console.log("logout button pressed")
-        logoutFunction().then(r => console.log(r))
+        exampleRequest().then(r => console.log(r))
     });
 
 
@@ -158,7 +165,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
     };
 
 
+    exampleRequest().then(r => console.log(r))
+
+
     applyButton.addEventListener("click", function () {
+
 
 
         for (let i = 0; i < lockRadio.length; i++) {

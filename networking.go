@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	_ "github.com/gofiber/fiber/v2/middleware/session"
@@ -29,6 +30,7 @@ func handleHTTP(lockMode *Door_Request) {
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
+	app.Use(cors.New())
 
 	app.Static("/", "./public", fiber.Static{
 		Compress:      true,
@@ -154,39 +156,17 @@ func handleHTTP(lockMode *Door_Request) {
 
 	app.Get("/statistics/modeChanged", func(c *fiber.Ctx) error {
 
-		sess, err := store.Get(c)
-		if err != nil {
-			log.Println(err)
-		}
+		fmt.Println("Lock history requested")
 
-		username := sess.Get("Username")
-		isLogin := username != nil
-
-		if isLogin {
-
-			return c.JSON(aqlJSON("FOR x IN LOCK_HISTORY RETURN x"))
-		} else {
-			return c.SendStatus(403)
-		}
+		return c.JSON(aqlJSON("FOR x IN LOCK_HISTORY RETURN x"))
 
 	})
 
 	app.Get("/statistics/keycardUsed", func(c *fiber.Ctx) error {
 
-		sess, err := store.Get(c)
-		if err != nil {
-			log.Println(err)
-		}
+		fmt.Println("Door history requested")
 
-		username := sess.Get("Username")
-		isLogin := username != nil
-
-		if isLogin {
-			return c.JSON(aqlJSON("FOR x IN DOOR_HISTORY RETURN x"))
-		} else {
-			return c.SendStatus(403)
-		}
-
+		return c.JSON(aqlJSON("FOR x IN DOOR_HISTORY RETURN x"))
 	})
 
 	err := app.Listen(":8080")
