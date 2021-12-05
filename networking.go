@@ -140,9 +140,21 @@ func handleHTTP(lockMode *Door_Request) {
         })
 
 	///TODO ---------------------------------------------
-	app.Post("/logout", func(c *fiber.Ctx) error {
-		return c.SendStatus(200)
-	})
+   app.Post("/logout", func(c *fiber.Ctx) error {
+        sess, err := store.Get(c)
+        if err != nil {
+            panic(err)
+        }
+
+        sess.Delete("Username")
+	    fmt.Println("Log out requested")
+        // Destroy session
+        if err := sess.Destroy(); err != nil {
+            panic(err)
+        }
+
+        return c.Redirect("/")
+    })
 
 	app.Get("/statistics/modeChanged", func(c *fiber.Ctx) error {
 

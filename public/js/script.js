@@ -165,7 +165,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
     // Database button
     logoutButton.addEventListener("click", () => {
         console.log("logout button pressed")
-        exampleRequest().then(r => console.log(r))
+        axios({
+            method: "post",
+            url: "http://localhost:8080/logout",
+            data: null,
+        })
     });
 
 
