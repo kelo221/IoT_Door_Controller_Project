@@ -4,6 +4,13 @@ console.log("hello world")
 
 //TODO  send the lock (integer) status to /updateLock/:lockMode
 function sendLockUpdate(newLockMode){
+   console.log(newLockMode)
+
+    axios({
+        method: "put",
+        url: "http://localhost:8080/updateLock/"+ newLockMode,
+        data: null,
+    })
 
 }
 
@@ -16,8 +23,53 @@ function convertEpochToSpecificTimezone(timeEpoch, offset) {
     return nd.toLocaleString();
 }
 
-//logs table
-function generateTable() {
+function DoorTable() {
+    // console.log("asking for users")
+
+    axios({
+        method: "get",
+        url: "http://localhost:8080/statistics/keycardUsed",
+        data: null,
+    })
+        .then(function (response) {
+            //handle success
+
+            let string1 = JSON.stringify(response);
+            let parsed = JSON.parse(string1);
+
+            console.log(parsed + "here is data")
+
+            for (let i = 0; i < parsed.data.length; i++) {
+
+                let tr = document.createElement('tr')
+                let td1 = document.createElement('th')
+                let td2 = document.createElement('td')
+                let td3 = document.createElement('td')
+                let text1 = document.createTextNode((i + 1).toString())
+                let text2 = document.createTextNode(parsed.data[i].name)
+                let text3 = document.createTextNode(convertEpochToSpecificTimezone(parsed.data[i].time, +3))
+                td1.appendChild(text1)
+                td2.appendChild(text2)
+                td3.appendChild(text3)
+                tr.appendChild(td1)
+                tr.appendChild(td2)
+                tr.appendChild(td3)
+
+
+                document.getElementById("doorTable").appendChild(tr)
+
+            }
+
+        })
+        .catch(function (response) {
+            //handle error
+            console.log(response);
+        });
+
+}
+
+function LockTable() {
+    // console.log("asking for users")
 
     axios({
         method: "get",
@@ -30,41 +82,19 @@ function generateTable() {
             let string1 = JSON.stringify(response);
             let parsed = JSON.parse(string1);
 
-            let teachTotal = 0
-            let xTotal = 0
-            let vTotal = 0
-            let currentCount = 0
+            console.log(parsed + "here is data")
 
             for (let i = 0; i < parsed.data.length; i++) {
 
-                // This could have been in the database
-                if (parsed.data[i].user === "teach") {
-                    teachTotal++
-                    currentCount = teachTotal
-                }
-                if (parsed.data[i].user === "x") {
-                    xTotal++
-                    currentCount = xTotal
-                }
-                if (parsed.data[i].user === "v") {
-                    vTotal++
-                    currentCount = vTotal
-                }
-
-                if (parsed.data[i].user === "INCORRECT CREDENTIALS") {
-                    currentCount = 0
-                }
-
                 let tr = document.createElement('tr')
-
                 let td1 = document.createElement('th')
                 let td2 = document.createElement('td')
                 let td3 = document.createElement('td')
                 let td4 = document.createElement('td')
                 let text1 = document.createTextNode((i + 1).toString())
-                let text2 = document.createTextNode(parsed.data[i].user)
-                let text3 = document.createTextNode(convertEpochToSpecificTimezone(parsed.data[i].time, +3))
-                let text4 = document.createTextNode(currentCount.toString())
+                let text2 = document.createTextNode(parsed.data[i].mode)
+                let text3 = document.createTextNode(parsed.data[i].name)
+                let text4 = document.createTextNode(convertEpochToSpecificTimezone(parsed.data[i].time, +3))
                 td1.appendChild(text1)
                 td2.appendChild(text2)
                 td3.appendChild(text3)
@@ -74,7 +104,9 @@ function generateTable() {
                 tr.appendChild(td3)
                 tr.appendChild(td4)
 
-                document.getElementById("logContent").appendChild(tr)
+
+
+                document.getElementById("lockTable").appendChild(tr)
 
             }
 
@@ -84,32 +116,8 @@ function generateTable() {
             console.log(response);
         });
 
-
 }
 
-async function exampleRequest() {
-    try {
-        let res = await axios({
-            url: 'http://localhost:8080/statistics/keycardUsed',
-            method: 'get',
-            timeout: 8000,
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        if (Object.keys(res.data).length !== 0) {
-
-            //console.log(Object.keys(res.data).length)
-            console.log(res.data)
-                return 0
-        } else {
-            return 0
-        }
-
-    } catch (err) {
-        console.error(err);
-    }
-}
 
 
 
@@ -127,18 +135,21 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 
     const homeDiv = document.getElementById("homeContent")
-    const historyDiv = document.getElementById("historyContent")
+    const DoorStatusDiv = document.getElementById("DoorStatusContent")
+
 
 
     homeDiv.style.display = "block"
-    historyDiv.style.display = "none"
+    DoorStatusDiv.style.display = "none"
+
 
 
     //  Home button handling
     homeButton.addEventListener("click", () => {
         console.log("homeButton clicked.")
         homeDiv.style.display = "block"
-        historyDiv.style.display = "none"
+        DoorStatusDiv.style.display = "none"
+
     });
 
 
@@ -146,7 +157,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     historyButton.addEventListener("click", () => {
         console.log("historyButton clicked.")
         homeDiv.style.display = "none"
-        historyDiv.style.display = "block"
+        DoorStatusDiv.style.display = "block"
 
     });
 
@@ -165,13 +176,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
     };
 
 
-    exampleRequest().then(r => console.log(r))
-
+    DoorTable()
+    LockTable()
 
     applyButton.addEventListener("click", function () {
-
-
-
         for (let i = 0; i < lockRadio.length; i++) {
             if (lockRadio[i].checked) {
                 console.log(i)

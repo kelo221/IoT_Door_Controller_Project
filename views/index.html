@@ -107,15 +107,39 @@
 
 
 <!-- History -->
-<div  class="hero is-light is-fullheight" id="historyContent">
+<div  class="hero is-light is-fullheight" id="DoorStatusContent">
     <div class="hero-body">
         <div class="container has-text-centered">
             <div class="column is-11 is-offset-1">
                 <div class="box has-background-white">
                     <h3 class="title is-4"><br></h3>
-                    <h3 id="historyContainer" class="title is-3">This is login history </h3>
+                    <h3 id="historyContainer" class="title is-3">This is Door Status history </h3>
                     <div class="level-item has-text-centered">
-                        {{.Graph}}
+
+                        <table class="table mx-6 is-align-content-start" id="doorTable">
+                            <thead>
+                            <tr>
+                                <th><abbr title="Number">#</abbr></th>
+                                <th>Who</th>
+                                <th>When</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+
+                        <table class="table" id="lockTable">
+                            <thead>
+                            <tr>
+                                <th><abbr title="Number">#</abbr></th>
+                                <th>Mode</th>
+                                <th>Who</th>
+                                <th>When</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
 
                 </div>
@@ -123,30 +147,10 @@
         </div>
     </div>
 </div >
-<!-- Hoístory END -->
+<!-- History END -->
 
-<!-- DoorStatus -->
-<div  class="hero is-light is-fullheight" id="statusContent">
-    <div class="hero-body">
-        <div class="container has-text-centered">
-            <div class="column is-11 is-offset-1">
-                <div class="box has-background-white">
-                    <h3 class="title is-4"><br></h3>
-                    <h3 id="statusContainer" class="title is-3">Current Status: Open/Closed </h3>
-                    <div class="level-item has-text-centered">
-                            <img src="../img/DoorClosed.png" alt="status" id="doorImage">
-                    </div>
 
-                    <div class="columns is-centered pb-5">
-                        <button class="button is-large" id="changeButton">Change</button>
-                    </div>
 
-                </div>
-            </div>
-        </div>
-    </div>
-</div >
-<!-- DoorStatus END -->
 
 </body>
 </html>
