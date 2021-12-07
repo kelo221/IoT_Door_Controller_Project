@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	jwtware "github.com/gofiber/jwt/v3"
-	"github.com/gofiber/template/html"
 	"github.com/golang-jwt/jwt/v4"
 	"google.golang.org/protobuf/proto"
 	"io"
@@ -25,10 +24,7 @@ type userData struct {
 
 func handleHTTP(lockMode *Door_Request) {
 
-	engine := html.New("./views", ".html")
-	app := fiber.New(fiber.Config{
-		Views: engine,
-	})
+	app := fiber.New(fiber.Config{})
 
 	app.Static("/", "./public", fiber.Static{
 		Compress:      false,
