@@ -32,7 +32,6 @@ func handleHTTP(lockMode *Door_Request) {
 		CacheDuration: 10 * time.Second,
 		MaxAge:        3600,
 	})
-
 	app.Use(cors.New())
 
 	app.Post("/login", func(c *fiber.Ctx) error {
