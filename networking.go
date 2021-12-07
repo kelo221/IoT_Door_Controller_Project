@@ -5,18 +5,17 @@ import (
 	"crypto/subtle"
 	"encoding/hex"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/limiter"
-	"github.com/gofiber/fiber/v2/middleware/session"
-	_ "github.com/gofiber/fiber/v2/middleware/session"
+	jwtware "github.com/gofiber/jwt/v3"
 	"github.com/gofiber/template/html"
+	"github.com/golang-jwt/jwt/v4"
 	"google.golang.org/protobuf/proto"
 	"io"
-	"log"
 	"net"
 	"strconv"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 type userData struct {
@@ -30,131 +29,101 @@ func handleHTTP(lockMode *Door_Request) {
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
-	app.Use(cors.New())
 
 	app.Static("/", "./public", fiber.Static{
-		Compress:      true,
+		Compress:      false,
 		Index:         "login.html",
 		CacheDuration: 10 * time.Second,
 		MaxAge:        3600,
 	})
 
-	app.Use(limiter.New(limiter.Config{
-		Max:               20,
-		Expiration:        30 * time.Second,
-		LimiterMiddleware: limiter.SlidingWindow{},
-	}))
+	app.Use(cors.New())
 
-	store := session.New()
+	app.Post("/login", func(c *fiber.Ctx) error {
 
-	app.Get("/home", func(c *fiber.Ctx) error {
+		user := c.FormValue("username")
+		pass := c.FormValue("password")
 
-		sess, err := store.Get(c)
+		// Create the Claims
+		claims := jwt.MapClaims{
+			"name":  "John Doe",
+			"admin": true,
+			"exp":   time.Now().Add(time.Hour * 72).Unix(),
+		}
+
+		// Create token
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+		// Generate encoded token and send it as response.
+		t, err := token.SignedString([]byte("secret"))
 		if err != nil {
-			log.Println(err)
-		}
-
-		username := sess.Get("Username")
-		isLogin := username != nil
-
-		if isLogin {
-			fmt.Println("success")
-			return c.Render("index", fiber.Map{
-				"User": username,
-				"Mode": lockMode.GetLockStatus(),
-			})
-		}
-		fmt.Println("not logged in")
-		return c.Redirect("/")
-	})
-
-	app.Post("/auth/*", func(c *fiber.Ctx) error {
-
-		sess, err := store.Get(c)
-		if err != nil {
-			log.Println(err)
-		}
-
-		p := new(userData)
-		if err := c.BodyParser(p); err != nil {
-			return err
+			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 
 		salt := []byte("salt")
-		passwordHash := hex.EncodeToString(HashPassword([]byte(p.Password), salt))
-		expectedPasswordHash := aqlToString("FOR r IN DOOR_LOGIN FILTER r.username == \"" + p.Username + "\" RETURN r.hash")
+		passwordHash := hex.EncodeToString(HashPassword([]byte(pass), salt))
+		expectedPasswordHash := aqlToString("FOR r IN DOOR_LOGIN FILTER r.username == \"" + user + "\" RETURN r.hash")
 
 		usernameMatch := subtle.ConstantTimeCompare([]byte(passwordHash[:]), []byte((expectedPasswordHash[:]))) == 1
 
 		if usernameMatch {
 
-			sess.Set("Username", p.Username)
-			if err := sess.Save(); err != nil {
-				panic(err)
-			}
-
 			fmt.Println("AUTH OK")
-			return c.Redirect("/home")
+			return c.JSON(fiber.Map{"token": t})
 		}
-		return c.SendStatus(400)
+		return c.SendStatus(fiber.StatusUnauthorized)
 	})
+
+	// JWT Middleware
+	app.Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte("secret"),
+	}))
+
+	app.Get("/getInitData", func(c *fiber.Ctx) error {
+
+		user := c.Locals("user").(*jwt.Token)
+		claims := user.Claims.(jwt.MapClaims)
+		name := claims["name"].(string)
+
+		s := "{\"name\":\"" + name + "\", \"mode\":\"" + lockMode.GetLockStatus().String() + "\"}"
+
+		return c.SendString(s)
+
+	})
+
+	/*		---		RESTRICTED		---		*/
 
 	app.Put("/updateLock/:lockMode", func(c *fiber.Ctx) error {
 
+		newLockMode := c.Params("lockMode")
 
+		i, err := strconv.Atoi(newLockMode)
+		if err != nil {
+			// handle error
+			fmt.Println(err)
+			return c.SendStatus(400)
+		}
+		fmt.Println(newLockMode)
 
+		user := c.Locals("user").(*jwt.Token)
+		claims := user.Claims.(jwt.MapClaims)
+		name := claims["name"].(string)
+		fmt.Println(name)
 
-                newLockMode := c.Params("lockMode")
+		if i >= 0 && i <= 3 {
+			lockMode.LockStatus = LOCK_STATUSLock(i)
+			/*                     tcpSendPackage(lockMode) */
 
-                i, err := strconv.Atoi(newLockMode)
-                if err != nil {
-                    // handle error
-                    fmt.Println(err)
-                    return c.SendStatus(400)
-                }
+			aqlNoReturn(
+				fmt.Sprintf("INSERT {name: \"%s\" , time: DATE_NOW(),mode: \"%s\" } INTO LOCK_HISTORY", name, lockMode.GetLockStatus().String()))
 
-                if i >= 0 && i <= 3 {
-                    lockMode.LockStatus = LOCK_STATUSLock(i)
-/*                     tcpSendPackage(lockMode) */
+			fmt.Println("added to lock history DB")
 
-                    p := new(userData)
-                    if err := c.BodyParser(p); err != nil {
-                        return err
-                    }
+			return c.SendStatus(200)
+		}
+		return c.SendStatus(400)
 
-                    aqlNoReturn(
-                        "INSERT {" +
-                            "   name: " +
-                            p.Username +
-                            "," +
-                            "    time: DATE_NOW()" +
-                            "  } INTO LOCK_HISTORY OPTIONS { ignoreErrors: true }")
-
-                    fmt.Println("added to lock history DB")
-
-                    return c.SendStatus(200)
-                }
-                return c.SendStatus(400)
-
-
-        })
-
-	///TODO ---------------------------------------------
-   app.Post("/logout", func(c *fiber.Ctx) error {
-        sess, err := store.Get(c)
-        if err != nil {
-            panic(err)
-        }
-
-        sess.Delete("Username")
-	    fmt.Println("Log out requested")
-        // Destroy session
-        if err := sess.Destroy(); err != nil {
-            panic(err)
-        }
-
-        return c.Redirect("/")
-    })
+	})
 
 	app.Get("/statistics/modeChanged", func(c *fiber.Ctx) error {
 
@@ -241,7 +210,7 @@ func tcpListenerLoop(lockMode *Door_Request) {
 
 					data, err := proto.Marshal(lockMode)
 					if err != nil {
-						log.Fatal("marshall error", err)
+						fmt.Println("marshall error", err)
 
 					}
 
@@ -266,7 +235,7 @@ func tcpSendPackage(lockMode *Door_Request) {
 
 	data, err := proto.Marshal(lockMode)
 	if err != nil {
-		log.Fatal("marshall error", err)
+		fmt.Println("marshall error", err)
 
 	}
 	conn, err := net.DialTimeout("tcp", embeddedAddress+":"+embeddedPort, time.Second*30)

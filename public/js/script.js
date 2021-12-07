@@ -1,14 +1,23 @@
 "use strict"
 
+
 console.log("hello world")
 
 //TODO  send the lock (integer) status to /updateLock/:lockMode
 function sendLockUpdate(newLockMode){
-   console.log(newLockMode)
+  // console.log(newLockMode.toString())
+
+    let headers = {}
+    if (localStorage.token) {
+        headers = { 'Authorization': `Bearer ${localStorage.token}`, }
+    }
 
     axios({
         method: "put",
-        url: "http://localhost:8080/updateLock/"+ newLockMode,
+        withCredentials: true,
+        crossDomain: true,
+        headers: headers,
+        url: "/updateLock/"+ newLockMode.toString(),
         data: null,
     })
 
@@ -26,9 +35,19 @@ function convertEpochToSpecificTimezone(timeEpoch, offset) {
 function DoorTable() {
     // console.log("asking for users")
 
+    let headers = {}
+    if (localStorage.token) {
+        headers = { 'Authorization': `Bearer ${localStorage.token}`, }
+    }
+
     axios({
         method: "get",
-        url: "http://localhost:8080/statistics/keycardUsed",
+        xhrFields: {
+            withCredentials: true
+        },
+        headers: headers,
+        crossDomain: true,
+        url: "/statistics/keycardUsed",
         data: null,
     })
         .then(function (response) {
@@ -37,7 +56,7 @@ function DoorTable() {
             let string1 = JSON.stringify(response);
             let parsed = JSON.parse(string1);
 
-            console.log(parsed + "here is data")
+           // console.log(parsed + "here is data")
 
             for (let i = 0; i < parsed.data.length; i++) {
 
@@ -71,9 +90,19 @@ function DoorTable() {
 function LockTable() {
     // console.log("asking for users")
 
+    let headers = {}
+    if (localStorage.token) {
+        headers = { 'Authorization': `Bearer ${localStorage.token}`, }
+    }
+
     axios({
         method: "get",
-        url: "http://localhost:8080/statistics/modeChanged",
+        xhrFields: {
+            withCredentials: true
+        },
+        crossDomain: true,
+        headers: headers,
+        url: "statistics/modeChanged",
         data: null,
     })
         .then(function (response) {
@@ -82,7 +111,7 @@ function LockTable() {
             let string1 = JSON.stringify(response);
             let parsed = JSON.parse(string1);
 
-            console.log(parsed + "here is data")
+          //  console.log(parsed + "here is data")
 
             for (let i = 0; i < parsed.data.length; i++) {
 
@@ -121,7 +150,38 @@ function LockTable() {
 
 
 
+function  updateUserVars() {
+
+
+        let headers = {}
+        if (localStorage.token) {
+            headers = { 'Authorization': `Bearer ${localStorage.token}`, }
+        }
+
+    fetch("/getInitData", { headers: headers })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(myJson) {
+            console.log(JSON.stringify(myJson));
+            document.getElementById("userName").innerText = "Welcome " + myJson.name
+            document.getElementById("modeContainer").innerText = "Current Lock Mode: " + myJson.mode
+        });
+
+
+}
+
+
+
+
 window.addEventListener('DOMContentLoaded', (event) => {
+
+    document.getElementById("modeContainer").innerText ="new"
+    updateUserVars()
+
+
+
+
     console.log("DOM LOADED")
     const lockImage = document.getElementById("lockImage")
     const lockRadio = document.getElementsByName("mode")
@@ -162,14 +222,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
     });
 
 
-    // Database button
+    // Log Out
     logoutButton.addEventListener("click", () => {
         console.log("logout button pressed")
-        axios({
-            method: "post",
-            url: "http://localhost:8080/logout",
-            data: null,
-        })
+        localStorage.clear()
+        window.location.href = "http://127.0.0.1:8080"
     });
 
 
@@ -186,7 +243,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     applyButton.addEventListener("click", function () {
         for (let i = 0; i < lockRadio.length; i++) {
             if (lockRadio[i].checked) {
-                console.log(i)
+              //  console.log(i)
 
                 switch (i) {
                     case 0:     // OPEN

@@ -12,6 +12,68 @@
     <link rel="shortcut icon" href="img/door.ico" type="image/x-icon">
 </head>
 
+<script>
+    /*
+    function makeRequest() {
+        let headers = {}
+        if (localStorage.token) {
+            headers = { 'Authorization': `Bearer ${localStorage.token}`, }
+        }
+        fetch("/home", { headers: headers })
+            .then((res) => {
+                if (res.status === 200) {
+                    return res.text()
+                } else {
+                    throw Error(res.statusText)
+                }
+            }).then(responseText =>
+
+            console.log("requestResponse", responseText)
+        //document.querySelector('html').innerHTML = responseText.toString()
+
+        )
+            .catch(console.error)
+    }
+    */
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+
+        const submitButton = document.getElementById("submitButton")
+
+        submitButton.addEventListener("click", () => {
+            const username  = (document.getElementById('usernameInput').value)
+            const password  = (document.getElementById('passwordInput').value)
+
+         //  console.log(     `/login?username=${username}&password=${password} `)
+
+            fetch( `/login/?username=${username}&password=${password} `, {
+                method: 'POST'} )
+                .then((res) => {
+                    if (res.status === 200) {
+                        return res.json()
+                    } else {
+                        throw Error(res.statusText)
+                    }
+                })
+                .then(data => {
+                    localStorage.setItem("token", data.token)
+
+                    let headers = {}
+                    if (localStorage.token) {
+                        headers = { 'Authorization': `Bearer ${localStorage.token}`, }
+                    }
+                    window.location.replace("http://127.0.0.1:8080/home.html");
+                })
+                .catch(console.error)
+
+        });
+
+
+
+
+    });
+</script>
+
 <body>
 <section class="hero is-light is-fullheight">
     <div class="hero-body">
@@ -23,10 +85,10 @@
                 <div class="box">
                     <figure class="avatar">
                     </figure>
-                    <form action="auth" method="POST">
+
                         <div class="field">
                             <div class="control has-icons-left has-icons-right">
-                                <input type="text" class="input is-medium"  name="username" placeholder="Username" required>
+                                <input type="text" class="input is-medium" id="usernameInput"  name="username" placeholder="Username" required>
                                 <span class="icon is-left">
                                     <i class="fas fa-user"></i>
                                 </span>
@@ -34,14 +96,14 @@
                         </div>
                         <div class="field">
                             <div class="control has-icons-left has-icons-right">
-                                <input type="password"  class="input is-medium"  name="password" placeholder="Password" required>
+                                <input type="password"  class="input is-medium" id="passwordInput"  name="password" placeholder="Password" required>
                                 <span class="icon is-left">
                                     <i class="fas fa-key"></i>
                                 </span>
                             </div>
                         </div>
-                        <input type="submit" class="button is-block is-info is-large is-fullwidth">
-                    </form>
+                        <input type="submit" class="button is-block is-info is-large is-fullwidth" id="submitButton">
+
                 </div>
             </div>
         </div>
