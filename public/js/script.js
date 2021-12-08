@@ -3,9 +3,7 @@
 
 console.log("hello world")
 
-//TODO  send the lock (integer) status to /updateLock/:lockMode
 function sendLockUpdate(newLockMode){
-  // console.log(newLockMode.toString())
 
     let headers = {}
     if (localStorage.token) {
@@ -156,6 +154,8 @@ function  updateUserVars() {
         let headers = {}
         if (localStorage.token) {
             headers = { 'Authorization': `Bearer ${localStorage.token}`, }
+        }else {
+           window.location.replace("http://127.0.0.1:8080/login.html");
         }
 
     fetch("/getInitData", { headers: headers })
@@ -169,6 +169,8 @@ function  updateUserVars() {
         });
 
 
+
+
 }
 
 
@@ -176,8 +178,9 @@ function  updateUserVars() {
 
 window.addEventListener('DOMContentLoaded', (event) => {
 
-    document.getElementById("modeContainer").innerText ="new"
+    document.getElementById("modeContainer").innerText ="MISSING"
     updateUserVars()
+
 
 
 
@@ -186,7 +189,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
     const lockImage = document.getElementById("lockImage")
     const lockRadio = document.getElementsByName("mode")
     const applyButton = document.getElementById("applyButton")
-    //
     const sendManualButton = document.getElementById("sendManualButton")
 
     const modeContainer = document.getElementById("modeContainer")
@@ -195,7 +197,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
     const historyButton = document.getElementById("historyButton")
 
     const logoutButton = document.getElementById("logoutButton")
-
 
     const homeDiv = document.getElementById("homeContent")
     const DoorStatusDiv = document.getElementById("DoorStatusContent")
