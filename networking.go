@@ -87,8 +87,20 @@ func handleHTTP(lockMode *Door_Request) {
 	})
 
 	/*		---		RESTRICTED		---		*/
+	//openmanually
+
+	app.Put("/manualOpen", func(c *fiber.Ctx) error {
+		lockMode.DoorRequest = LOCK_STATUS_APPROVED
+		//tcpSendPackage(lockMode) //no other device connected to it
+		fmt.Println("door manually opened")
+		lockMode.DoorRequest = LOCK_STATUS_NO_REQUEST
+		return c.SendStatus(200)
+
+	})
 
 	app.Put("/updateLock/:lockMode", func(c *fiber.Ctx) error {
+
+		// lockMode.DoorRequest = LOCK_STATUS_APPROVED
 
 		newLockMode := c.Params("lockMode")
 

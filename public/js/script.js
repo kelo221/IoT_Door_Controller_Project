@@ -186,6 +186,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
     const lockImage = document.getElementById("lockImage")
     const lockRadio = document.getElementsByName("mode")
     const applyButton = document.getElementById("applyButton")
+    //
+    const sendManualButton = document.getElementById("sendManualButton")
+
     const modeContainer = document.getElementById("modeContainer")
 
     const homeButton = document.getElementById("homeButton")
@@ -209,6 +212,26 @@ window.addEventListener('DOMContentLoaded', (event) => {
         console.log("homeButton clicked.")
         homeDiv.style.display = "block"
         DoorStatusDiv.style.display = "none"
+
+    });
+
+    //  Manual button handling2
+    sendManualButton.addEventListener("click", () => {
+        console.log(" manualButton Clicked.")
+        let headers = {}
+        if (localStorage.token) {
+            headers = { 'Authorization': `Bearer ${localStorage.token}`, }
+        }
+
+        axios({
+            method: "put",
+            withCredentials: true,
+            crossDomain: true,
+            headers: headers,
+            url: "/manualOpen/",
+            data: null,
+        })
+
 
     });
 
