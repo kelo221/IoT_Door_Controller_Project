@@ -1,0 +1,117 @@
+basePath: /
+host: localhost:8080
+info:
+  contact: {}
+  description: User interface for handling the locking of the door.
+  license:
+    name: AGPL V3
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  title: IoT Door Controller Project
+  version: "1.0"
+paths:
+  /getInitData:
+    get:
+      consumes:
+      - '*/*'
+      description: Gets the currents users claim the name that is associated with
+        it and check the status of the Protobuffer package
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: ""
+      summary: Returns the current users name and the lock status
+      tags:
+      - root
+  /login:
+    post:
+      consumes:
+      - '*/*'
+      description: If the user is found in the database the server returns a JWT token,
+        which is used to access the other APIs
+      parameters:
+      - description: Username
+        in: query
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: query
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: ""
+      summary: Handles the authentication of the users.
+      tags:
+      - root
+  /manualOpen:
+    put:
+      consumes:
+      - '*/*'
+      description: When the lock state of the device is set to hard, the door can
+        only be opened manually from the interface
+      responses:
+        "200":
+          description: ""
+      summary: Commands the embedded device to open the door
+      tags:
+      - root
+  /statistics/keycardUsed:
+    get:
+      consumes:
+      - '*/*'
+      description: Queries the ArangoDB for RFID history and returns results as JSON
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Returns the date when the RFID card was read
+      tags:
+      - root
+  /statistics/modeChanged:
+    get:
+      consumes:
+      - '*/*'
+      description: Queries the ArangoDB for lock history and returns results as JSON
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Returns the date when the lock mode was changed
+      tags:
+      - root
+  /updateLock/:
+    put:
+      consumes:
+      - '*/*'
+      description: User sets the wanted lock mode from the interface
+      parameters:
+      - description: Set lock Mode
+        in: query
+        name: '?'
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: ""
+      summary: Set the lock mode
+      tags:
+      - root
+schemes:
+- http
+swagger: "2.0"

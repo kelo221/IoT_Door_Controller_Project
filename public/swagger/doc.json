@@ -1,0 +1,172 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "User interface for handling the locking of the door.",
+        "title": "IoT Door Controller Project",
+        "contact": {},
+        "license": {
+            "name": "AGPL V3",
+            "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/getInitData": {
+            "get": {
+                "description": "Gets the currents users claim the name that is associated with it and check the status of the Protobuffer package",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "root"
+                ],
+                "summary": "Returns the current users name and the lock status",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "If the user is found in the database the server returns a JWT token, which is used to access the other APIs",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "root"
+                ],
+                "summary": "Handles the authentication of the users.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "username",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Password",
+                        "name": "password",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/manualOpen": {
+            "put": {
+                "description": "When the lock state of the device is set to hard, the door can only be opened manually from the interface",
+                "consumes": [
+                    "*/*"
+                ],
+                "tags": [
+                    "root"
+                ],
+                "summary": "Commands the embedded device to open the door",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/statistics/keycardUsed": {
+            "get": {
+                "description": "Queries the ArangoDB for RFID history and returns results as JSON",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "root"
+                ],
+                "summary": "Returns the date when the RFID card was read",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/statistics/modeChanged": {
+            "get": {
+                "description": "Queries the ArangoDB for lock history and returns results as JSON",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "root"
+                ],
+                "summary": "Returns the date when the lock mode was changed",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/updateLock/": {
+            "put": {
+                "description": "User sets the wanted lock mode from the interface",
+                "consumes": [
+                    "*/*"
+                ],
+                "tags": [
+                    "root"
+                ],
+                "summary": "Set the lock mode",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Set lock Mode",
+                        "name": "?",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    }
+}
