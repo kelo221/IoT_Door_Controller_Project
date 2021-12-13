@@ -1,7 +1,9 @@
-# IoT_Door_Controller_Project
+# IoT Door Project
 ## About
 
-A Fullstack for door controll system.
+A Fullstack for door control system, using an Arduino, NFC, and a servo motor.
+The web interface controls the lock state of the door and passes requests to the backend to send and receive information.
+
 
 picture(block diagram)
 
@@ -11,8 +13,8 @@ picture(block diagram)
 
 pic
 
-This page shows that first time opening the website, the user will be asked to enter an username and a password. For testing purposes current username is: “User”, and the password is the same as the username.
-
+The first connecting to the website user is prented with a login prompt.
+Entering "User" for both password and username the server replies with an JWT authenctication key.
 
 ## 2. Home Page
 home page pic
