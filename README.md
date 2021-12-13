@@ -13,7 +13,7 @@ picture(block diagram)
 
 pic
 
-The first connecting to the website user is prented with a login prompt.
+The first time connecting to the website the user is prented with a login prompt.
 Entering "User" for both password and username the server replies with an JWT authenctication key.
 
 ## 2. Home Page
