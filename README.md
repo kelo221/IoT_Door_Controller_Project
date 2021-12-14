@@ -4,20 +4,21 @@
 A Fullstack for door control system, using an Arduino, NFC, and a servo motor.
 The web interface controls the lock state of the door and passes requests to the backend to send and receive information.
 
-
-picture(block diagram)
+<img width="550" alt="截屏2021-12-14 02 29 25" src="https://user-images.githubusercontent.com/56063237/145910718-a256f146-35a1-4dfb-8ebc-9c43f8bedfbe.png">
 
 
 
 ## 1. Authentication page
 
-pic
+<img width="1177" alt="截屏2021-12-14 02 27 33" src="https://user-images.githubusercontent.com/56063237/145910625-f2c29b7a-c1b1-46bd-8ba4-dc7ca4b94511.png">
+
 
 The first time connecting to the website the user is prented with a login prompt.
 Entering "User" for both password and username the server replies with an JWT authenctication key.
 
 ## 2. Home Page
-home page pic
+
+<img width="1065" alt="截屏2021-12-14 02 25 45" src="https://user-images.githubusercontent.com/56063237/145910447-1f6ae905-1b43-43ab-b4bd-4c813c9b528b.png">
 
 #### 1 .User name
 Here shows the username.
