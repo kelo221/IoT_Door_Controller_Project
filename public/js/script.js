@@ -277,6 +277,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             lockImage.src = "img/lockOpenAnim.png"
                             modeContainer.innerHTML ="Current Mode: UNLOCKED"
                             currentLockStatus = 0
+                            sendManualButton.setAttribute('disabled', 'disabled')
 
                             console.log("changed")
                         }
@@ -289,10 +290,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         if (currentLockStatus === 0) {
                             lockImage.src = "img/lockCloseAnim.png"
                             currentLockStatus = 1
+                            sendManualButton.setAttribute('disabled', 'disabled')
+
                             console.log("changed")
                         }
                         else if (currentLockStatus === 2) {
                             currentLockStatus = 1
+                            sendManualButton.setAttribute('disabled', 'disabled')
+
                             console.log("changed")
                         }
                         modeContainer.innerHTML ="Current Mode: SOFT"
@@ -308,10 +313,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             console.log("changed")
 
                             currentLockStatus = 2
+                            sendManualButton.removeAttribute('disabled')
                         } else if (currentLockStatus === 1) {
                             currentLockStatus =  2
 
                             console.log("changed")
+                            sendManualButton.removeAttribute('disabled')
                         }
                         modeContainer.innerHTML ="Current Mode: HARD"
                         sendLockUpdate(currentLockStatus)
