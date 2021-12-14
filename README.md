@@ -1,8 +1,9 @@
 # IoT Door Project
 ## About
 
-A Fullstack for door control system, using an Arduino, NFC, and a servo motor.
+A Fullstack for door control system, using an Arduino, NFC, and a servo motor, the door opens when either the GridEye sees something or the lock requirements are met.
 The web interface controls the lock state of the door and passes requests to the backend to send and receive information.
+REST API documentation can be found at http://localhost:8080/swagger/index.html#/ , once the server is running.
 
 <img width="550" alt="截屏2021-12-14 02 29 25" src="https://user-images.githubusercontent.com/56063237/145910718-a256f146-35a1-4dfb-8ebc-9c43f8bedfbe.png">
 
