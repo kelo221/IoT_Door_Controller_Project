@@ -15,7 +15,7 @@ function sendLockUpdate(newLockMode){
         withCredentials: true,
         crossDomain: true,
         headers: headers,
-        url: "/updateLock/"+ newLockMode.toString(),
+        url: "/updateLock/"+ newLockMode,
         data: null,
     })
 
@@ -281,7 +281,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
                             console.log("changed")
                         }
-                        sendLockUpdate(currentLockStatus)
+                        sendLockUpdate(currentLockStatus.toString())
                         break;
                     case 1:     // SOFT
 
@@ -301,7 +301,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             console.log("changed")
                         }
                         modeContainer.innerHTML ="Current Mode: SOFT"
-                        sendLockUpdate(currentLockStatus)
+                        sendLockUpdate(currentLockStatus.toString())
                         break;
                     case 2:     // HARD
 
@@ -309,19 +309,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
                         if (currentLockStatus === 0) {
                             lockImage.src = "img/lockCloseAnim.png"
-
                             console.log("changed")
-
                             currentLockStatus = 2
-                            sendManualButton.removeAttribute('disabled')
                         } else if (currentLockStatus === 1) {
                             currentLockStatus =  2
-
                             console.log("changed")
-                            sendManualButton.removeAttribute('disabled')
                         }
+
+                        sendManualButton.removeAttribute('disabled')
                         modeContainer.innerHTML ="Current Mode: HARD"
-                        sendLockUpdate(currentLockStatus)
+                        sendLockUpdate(currentLockStatus.toString())
                         break;
                 }
 
