@@ -15,7 +15,7 @@ function sendLockUpdate(newLockMode){
         withCredentials: true,
         crossDomain: true,
         headers: headers,
-        url: "/updateLock/"+ newLockMode,
+        url: "/updateLock/"+ newLockMode.toString(),
         data: null,
     })
 
