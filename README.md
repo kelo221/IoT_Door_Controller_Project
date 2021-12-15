@@ -19,7 +19,7 @@ Entering "User" for both password and username the server replies with an JWT au
 
 ## 2. Home Page
 
-<img width="1065" alt="截屏2021-12-14 02 25 45" src="https://user-images.githubusercontent.com/56063237/145910447-1f6ae905-1b43-43ab-b4bd-4c813c9b528b.png">
+<img width="1072" alt="截屏2021-12-15 23 31 09" src="https://user-images.githubusercontent.com/56063237/146269003-fb5208a5-5a98-4299-bedd-480bdec7aefc.png">
 
 #### 1 .User name
 Here shows the username.
@@ -46,14 +46,15 @@ when the mode is hard lock, user will need to open the door manually.
 
 
 ## 3. History page
-logs pic
+<img width="1035" alt="截屏2021-12-15 23 34 18" src="https://user-images.githubusercontent.com/56063237/146268494-e68a0b49-88e4-4b64-8d28-f92acefe413d.png">
+
 
 Login logs are stored here.
 
 #### 1. Read NFC
-The first table shows the NFC history.
+The first table shows the NFC history. 
 
 #### 2. Mode change history
-everytime the door lock mode changes, the server will send to database and saved the history.
+everytime the door lock mode changes, the server will send to database and saved the history. The table shows the user's name, mode changed and time.
 
 
