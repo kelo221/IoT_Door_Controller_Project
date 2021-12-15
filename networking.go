@@ -181,8 +181,9 @@ func loginHandler(c *fiber.Ctx) error {
 	pass := c.FormValue("password")
 
 	// Create the Claims
+	///
 	claims := jwt.MapClaims{
-		"name":  "John Doe",
+		"name":  aqlToString("FOR r IN DOOR_LOGIN FILTER r.username == \"" + user + "\" RETURN r.name"),
 		"admin": true,
 		"exp":   time.Now().Add(time.Hour * 72).Unix(),
 	}

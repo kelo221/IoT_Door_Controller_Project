@@ -95,7 +95,11 @@ func createAccounts() {
 	salt := []byte("salt")
 
 	aqlNoReturn("UPSERT { username: 'User' } " +
-		"INSERT { username: 'User', hash: '" + hex.EncodeToString(HashPassword([]byte("User"), salt)) + "', dateCreated: DATE_NOW() } " +
+		"INSERT { username: 'User', name: 'Marko', hash: '" + hex.EncodeToString(HashPassword([]byte("User"), salt)) + "', dateCreated: DATE_NOW() } " +
+		"UPDATE {} IN DOOR_LOGIN")
+
+	aqlNoReturn("UPSERT { username: 'User2' } " +
+		"INSERT { username: 'User2', name: 'Marie', hash: '" + hex.EncodeToString(HashPassword([]byte("User2"), salt)) + "', dateCreated: DATE_NOW() } " +
 		"UPDATE {} IN DOOR_LOGIN")
 
 }

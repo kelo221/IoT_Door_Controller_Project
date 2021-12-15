@@ -55,7 +55,7 @@ function DoorTable() {
             let parsed = JSON.parse(string1);
 
            // console.log(parsed + "here is data")
-
+//
             for (let i = 0; i < parsed.data.length; i++) {
 
                 let tr = document.createElement('tr')
