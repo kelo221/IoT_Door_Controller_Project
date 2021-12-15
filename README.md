@@ -39,10 +39,21 @@ save the changes
 #### 6. Log out
 clear the data.
 
+#### 7. Open door manually
+when the mode is hard lock, user will need to open the door manually.
+
+
 
 
 ## 3. History page
 logs pic
 
 Login logs are stored here.
+
+#### 1. Read NFC
+The first table shows the NFC history.
+
+#### 2. Mode change history
+everytime the door lock mode changes, the server will send to database and saved the history.
+
 
