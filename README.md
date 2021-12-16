@@ -5,7 +5,9 @@ A Fullstack for door control system, using an Arduino, NFC, and a servo motor, t
 The web interface controls the lock state of the door and passes requests to the backend to send and receive information.
 REST API documentation can be found at http://localhost:8080/swagger/index.html#/ , once the server is running.
 
-<img width="550" alt="截屏2021-12-14 02 29 25" src="https://user-images.githubusercontent.com/56063237/145910718-a256f146-35a1-4dfb-8ebc-9c43f8bedfbe.png">
+<img width="565" alt="截屏2021-12-16 22 03 16" src="https://user-images.githubusercontent.com/56063237/146441339-f56d6abb-c3ba-4deb-ae5f-6b517e92e5ed.png">
+
+![Untitled Diagram drawio](https://user-images.githubusercontent.com/56063237/146441074-f5c40f9c-63c3-4f5e-b0fe-fff94e4ff140.png)
 
 
 
