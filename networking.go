@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"crypto/subtle"
 	"encoding/hex"
@@ -293,17 +294,8 @@ func tcpListenerLoop() {
 					time.Sleep(time.Second * 11)
 					fmt.Println("now")
 
-					conn, err := net.DialTimeout("tcp", embeddedAddress+":"+embeddedPort, time.Second*30)
-					if err != nil {
-						fmt.Printf("connect failed, err : %v\n", err.Error())
-						return
-					} else {
-						fmt.Println("sent")
-					}
+					tcpSendPackage()
 
-					_, err = conn.Write(data)
-
-					tcpPacketOut.DoorRequest = LOCK_STATUS_NO_REQUEST
 				}
 				result.Reset()
 			}
@@ -319,11 +311,107 @@ func tcpSendPackage() {
 		fmt.Println("marshall error", err)
 
 	}
-	conn, err := net.DialTimeout("tcp", embeddedAddress+":"+embeddedPort, time.Second*30)
+	conn, err := net.DialTimeout("tcp", embeddedAddress+":"+embeddedPort, time.Second*10)
 	if err != nil {
 		fmt.Printf("connect failed, err : %v\n", err.Error())
 		return
 	}
 
 	_, err = conn.Write(data)
+}
+
+func sendResponse(conn *net.UDPConn, addr *net.UDPAddr) {
+	_, err := conn.WriteToUDP([]byte("OK"), addr)
+	if err != nil {
+		fmt.Printf("ER: %v", err)
+	}
+}
+
+func udpListenerLoop() {
+
+	addr := net.UDPAddr{
+		Port: 1234,
+		IP:   net.ParseIP("127.0.0.1"),
+	}
+	ser, err := net.ListenUDP("udp", &addr)
+	if err != nil {
+		fmt.Printf("Some error %v\n", err)
+		return
+	}
+	for {
+		p := make([]byte, 16)
+		_, remoteaddr, err := ser.ReadFromUDP(p)
+		fmt.Printf("Read a message from %v\n %s \n", remoteaddr, p)
+		b := p
+		fmt.Println(b)
+		if err != nil {
+			fmt.Printf("Some error  %v", err)
+			continue
+		}
+		go sendResponse(ser, remoteaddr)
+
+		newRFID := strings.TrimSpace(string(p))
+
+		space := regexp.MustCompile(`\s+`)
+		newRFID = space.ReplaceAllString(newRFID, " ")
+
+		fmt.Println(newRFID)
+
+		salt := []byte("salt")
+
+		rfidHash := hex.EncodeToString(HashPassword([]byte(newRFID), salt))
+		expectedHash := aqlToString("FOR doc IN DOOR_RFID  FILTER doc.HASHED_RFID == \"" + rfidHash + "\"  RETURN doc.HASHED_RFID")
+
+		fmt.Println(rfidHash)
+
+		hashFound := subtle.ConstantTimeCompare([]byte(rfidHash[:]), []byte((expectedHash[:]))) == 1
+
+		if hashFound {
+			fmt.Println("match")
+
+			aqlNoReturn("FOR doc IN DOOR_RFID" +
+				" FILTER doc.HASHED_RFID == \"" + rfidHash + "\"" +
+				"   INSERT {" +
+				"   name: doc.RFID_OWNER," +
+				"    time: DATE_NOW()" +
+				"  } INTO DOOR_HISTORY OPTIONS { ignoreErrors: true }")
+			fmt.Println("MATCH")
+			tcpPacketOut.DoorRequest = LOCK_STATUS_APPROVED
+		} else {
+			fmt.Println("NO MATCH")
+			tcpPacketOut.DoorRequest = LOCK_STATUS_DISAPPROVED
+		}
+
+		udpSendPackage()
+
+	}
+
+}
+
+func udpSendPackage() {
+
+	p := make([]byte, 2)
+	conn, err := net.Dial("udp", embeddedAddress+":"+embeddedPort)
+	if err != nil {
+		fmt.Printf("Some error %v", err)
+		return
+	}
+
+	data, err := proto.Marshal(&tcpPacketOut)
+	if err != nil {
+		fmt.Println("marshall error", err)
+
+	}
+
+	fmt.Println(data)
+
+	fmt.Fprintf(conn, string(data))
+	_, err = bufio.NewReader(conn).Read(p)
+	if err == nil {
+		fmt.Printf("%s\n", p)
+	} else {
+		fmt.Printf("Some error %v\n", err)
+	}
+	conn.Close()
+
 }
