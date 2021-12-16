@@ -254,11 +254,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
     });
 
 
-    let currentLockStatus = {
+/*    let currentLockStatus = {
         UNLOCKED: 0,
         SOFT: 1,
         HARD: 2,
     };
+    */
+
+   let currentLockStatus=0;
 
 
     DoorTable()

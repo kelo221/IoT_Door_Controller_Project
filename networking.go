@@ -8,6 +8,8 @@ import (
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"regexp"
+	"strings"
 
 	jwtware "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
@@ -100,6 +102,8 @@ func lockHistoryHandler(c *fiber.Ctx) error {
 // @Router /updateLock/ [put]
 func updateLock(c *fiber.Ctx) error {
 
+	fmt.Println("new lockmode received")
+
 	newLockMode := c.Params("lockMode")
 
 	i, err := strconv.Atoi(newLockMode)
@@ -117,7 +121,7 @@ func updateLock(c *fiber.Ctx) error {
 
 	if i >= 0 && i <= 3 {
 		tcpPacketOut.LockStatus = LOCK_STATUSLock(i)
-		/*                     tcpSendPackage(lockMode) */
+		tcpSendPackage()
 
 		aqlNoReturn(
 			fmt.Sprintf("INSERT {name: \"%s\" , time: DATE_NOW(),mode: \"%s\" } INTO LOCK_HISTORY", name, tcpPacketOut.GetLockStatus().String()))
@@ -244,17 +248,20 @@ func tcpListenerLoop() {
 						break
 					}
 				} else {
-					newMessage := RFID_MESSAGE{}
-					err = proto.Unmarshal(result.Bytes(), &newMessage)
-					if err != nil {
-						panic(err)
-					}
-					fmt.Println(newMessage.GetRFID_CODE())
+
+					newRFID := strings.TrimSpace(result.String())
+
+					space := regexp.MustCompile(`\s+`)
+					newRFID = space.ReplaceAllString(newRFID, " ")
+
+					fmt.Println(newRFID)
 
 					salt := []byte("salt")
 
-					rfidHash := hex.EncodeToString(HashPassword([]byte(newMessage.GetRFID_CODE()), salt))
+					rfidHash := hex.EncodeToString(HashPassword([]byte(newRFID), salt))
 					expectedHash := aqlToString("FOR doc IN DOOR_RFID  FILTER doc.HASHED_RFID == \"" + rfidHash + "\"  RETURN doc.HASHED_RFID")
+
+					fmt.Println(rfidHash)
 
 					hashFound := subtle.ConstantTimeCompare([]byte(rfidHash[:]), []byte((expectedHash[:]))) == 1
 
@@ -267,9 +274,10 @@ func tcpListenerLoop() {
 							"   name: doc.RFID_OWNER," +
 							"    time: DATE_NOW()" +
 							"  } INTO DOOR_HISTORY OPTIONS { ignoreErrors: true }")
-
+						fmt.Println("MATCH")
 						tcpPacketOut.DoorRequest = LOCK_STATUS_APPROVED
 					} else {
+						fmt.Println("NO MATCH")
 						tcpPacketOut.DoorRequest = LOCK_STATUS_DISAPPROVED
 					}
 
@@ -279,10 +287,18 @@ func tcpListenerLoop() {
 
 					}
 
+					fmt.Println(data)
+
+					fmt.Println("trying in 11 seconds")
+					time.Sleep(time.Second * 11)
+					fmt.Println("now")
+
 					conn, err := net.DialTimeout("tcp", embeddedAddress+":"+embeddedPort, time.Second*30)
 					if err != nil {
 						fmt.Printf("connect failed, err : %v\n", err.Error())
 						return
+					} else {
+						fmt.Println("sent")
 					}
 
 					_, err = conn.Write(data)

@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	embeddedAddress = "localhost"
-	embeddedPort    = "8082"
-	tcpListenPort   = "8081"
+	embeddedAddress = "192.168.1.38"
+	embeddedPort    = "8081"
+	tcpListenPort   = "8082"
 )
 
 var tcpPacketOut = Door_Request{
