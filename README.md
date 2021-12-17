@@ -1,7 +1,7 @@
 # IoT Door Project
 ## About
 
-A fullstack door control system, using an Arduino, NFC, and a servo motor. The door opens when either the GridEye sensor detects a rise in temperature or the lock requirements are met.
+A fullstack door control system, using an Arduino, NFC, and a servo motor. The door opens when either the GridEye sensor detects a rise in temperature or the lock requirements are met (NFC or manually opened).
 The web interface controls the lock state of the door and passes requests to the backend in order to send and receive information.
 REST API documentation can be found at http://localhost:8080/swagger/index.html#/, once the server is running.
 
@@ -24,7 +24,7 @@ By entering "User" for both password and username, the server replies with an JW
 
 <img width="1072" alt="截屏2021-12-15 23 31 09" src="https://user-images.githubusercontent.com/56063237/146269003-fb5208a5-5a98-4299-bedd-480bdec7aefc.png">
 
-#### 1 .User name
+#### 1. User name
 The username is displayed.
 
 #### 2. Lock mode
@@ -34,7 +34,7 @@ Here, the current lock mode is shown.
 By changing the mode, an animation will be displayed to show the selected mode.
 
 #### 4. Users’ setting
-There are three differnt lock modes available. Each mode has an info icon attached, which explains the behaviour of the mode.
+There are three different lock modes available. Each mode has an info icon attached, which explains the behaviour of the mode.
 
 #### 5. Apply setting
 Saves the changes.
