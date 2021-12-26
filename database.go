@@ -108,7 +108,7 @@ func createRDIF() {
 	salt := []byte("salt")
 
 	aqlNoReturn("UPSERT { RFID_OWNER: 'User' } " +
-		"INSERT { RFID_OWNER: 'User', HASHED_RFID: '" + hex.EncodeToString(HashPassword([]byte("F7 20 05 3A"), salt)) + "', dateCreated: DATE_NOW() } " +
+		"INSERT { RFID_OWNER: 'User', HASHED_RFID: '" + hex.EncodeToString(HashPassword([]byte("F720053A"), salt)) + "', dateCreated: DATE_NOW() } " +
 		"UPDATE {} IN DOOR_RFID")
 
 }

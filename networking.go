@@ -1,24 +1,16 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
 	"crypto/subtle"
 	"encoding/hex"
 	"fmt"
 	swagger "github.com/arsmn/fiber-swagger/v2"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"regexp"
-	"strings"
-
-	jwtware "github.com/gofiber/jwt/v3"
-	"github.com/golang-jwt/jwt/v4"
-	"google.golang.org/protobuf/proto"
-	"io"
-	"net"
 	"strconv"
 	"time"
+
+	jwtware "github.com/gofiber/jwt/v3"
 )
 
 // @title IoT Door Controller Project
@@ -122,7 +114,7 @@ func updateLock(c *fiber.Ctx) error {
 
 	if i >= 0 && i <= 3 {
 		tcpPacketOut.LockStatus = LOCK_STATUSLock(i)
-		tcpSendPackage()
+		handleMQTTOut()
 
 		aqlNoReturn(
 			fmt.Sprintf("INSERT {name: \"%s\" , time: DATE_NOW(),mode: \"%s\" } INTO LOCK_HISTORY", name, tcpPacketOut.GetLockStatus().String()))
@@ -144,7 +136,7 @@ func updateLock(c *fiber.Ctx) error {
 // @Router /manualOpen [put]
 func forceOpen(c *fiber.Ctx) error {
 	tcpPacketOut.DoorRequest = LOCK_STATUS_APPROVED
-	//tcpSendPackage(lockMode)
+	handleMQTTOut()
 	fmt.Println("door manually opened")
 	tcpPacketOut.DoorRequest = LOCK_STATUS_NO_REQUEST
 	return c.SendStatus(200)
@@ -214,204 +206,4 @@ func loginHandler(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"token": t})
 	}
 	return c.SendStatus(fiber.StatusUnauthorized)
-}
-
-func tcpListenerLoop() {
-
-	listen, err := net.Listen("tcp", ":"+tcpListenPort)
-	if err != nil {
-		panic(err)
-	}
-
-	for {
-		conn, err := listen.Accept()
-		if err != nil {
-			fmt.Println(err)
-		} else {
-
-			defer func(conn net.Conn) {
-				err := conn.Close()
-				if err != nil {
-
-				}
-			}(conn)
-
-			result := bytes.NewBuffer(nil)
-			var buf [1024]byte
-			for {
-				n, err := conn.Read(buf[0:])
-				result.Write(buf[0:n])
-				if err != nil {
-					if err == io.EOF {
-						continue
-					} else {
-						//	fmt.Println(err)
-						break
-					}
-				} else {
-
-					newRFID := strings.TrimSpace(result.String())
-
-					space := regexp.MustCompile(`\s+`)
-					newRFID = space.ReplaceAllString(newRFID, " ")
-
-					fmt.Println(newRFID)
-
-					salt := []byte("salt")
-
-					rfidHash := hex.EncodeToString(HashPassword([]byte(newRFID), salt))
-					expectedHash := aqlToString("FOR doc IN DOOR_RFID  FILTER doc.HASHED_RFID == \"" + rfidHash + "\"  RETURN doc.HASHED_RFID")
-
-					fmt.Println(rfidHash)
-
-					hashFound := subtle.ConstantTimeCompare([]byte(rfidHash[:]), []byte((expectedHash[:]))) == 1
-
-					if hashFound {
-						fmt.Println("match")
-
-						aqlNoReturn("FOR doc IN DOOR_RFID" +
-							" FILTER doc.HASHED_RFID == \"" + rfidHash + "\"" +
-							"   INSERT {" +
-							"   name: doc.RFID_OWNER," +
-							"    time: DATE_NOW()" +
-							"  } INTO DOOR_HISTORY OPTIONS { ignoreErrors: true }")
-						fmt.Println("MATCH")
-						tcpPacketOut.DoorRequest = LOCK_STATUS_APPROVED
-					} else {
-						fmt.Println("NO MATCH")
-						tcpPacketOut.DoorRequest = LOCK_STATUS_DISAPPROVED
-					}
-
-					data, err := proto.Marshal(&tcpPacketOut)
-					if err != nil {
-						fmt.Println("marshall error", err)
-
-					}
-
-					fmt.Println(data)
-
-					fmt.Println("trying in 11 seconds")
-					time.Sleep(time.Second * 11)
-					fmt.Println("now")
-
-					tcpSendPackage()
-
-				}
-				result.Reset()
-			}
-		}
-	}
-
-}
-
-func tcpSendPackage() {
-
-	data, err := proto.Marshal(&tcpPacketOut)
-	if err != nil {
-		fmt.Println("marshall error", err)
-
-	}
-	conn, err := net.DialTimeout("tcp", embeddedAddress+":"+embeddedPort, time.Second*10)
-	if err != nil {
-		fmt.Printf("connect failed, err : %v\n", err.Error())
-		return
-	}
-
-	_, err = conn.Write(data)
-}
-
-func sendResponse(conn *net.UDPConn, addr *net.UDPAddr) {
-	_, err := conn.WriteToUDP([]byte("OK"), addr)
-	if err != nil {
-		fmt.Printf("ER: %v", err)
-	}
-}
-
-func udpListenerLoop() {
-
-	addr := net.UDPAddr{
-		Port: 1234,
-		IP:   net.ParseIP("127.0.0.1"),
-	}
-	ser, err := net.ListenUDP("udp", &addr)
-	if err != nil {
-		fmt.Printf("Some error %v\n", err)
-		return
-	}
-	for {
-		p := make([]byte, 16)
-		_, remoteaddr, err := ser.ReadFromUDP(p)
-		fmt.Printf("Read a message from %v\n %s \n", remoteaddr, p)
-		b := p
-		fmt.Println(b)
-		if err != nil {
-			fmt.Printf("Some error  %v", err)
-			continue
-		}
-		go sendResponse(ser, remoteaddr)
-
-		newRFID := strings.TrimSpace(string(p))
-
-		space := regexp.MustCompile(`\s+`)
-		newRFID = space.ReplaceAllString(newRFID, " ")
-
-		fmt.Println(newRFID)
-
-		salt := []byte("salt")
-
-		rfidHash := hex.EncodeToString(HashPassword([]byte(newRFID), salt))
-		expectedHash := aqlToString("FOR doc IN DOOR_RFID  FILTER doc.HASHED_RFID == \"" + rfidHash + "\"  RETURN doc.HASHED_RFID")
-
-		fmt.Println(rfidHash)
-
-		hashFound := subtle.ConstantTimeCompare([]byte(rfidHash[:]), []byte((expectedHash[:]))) == 1
-
-		if hashFound {
-			fmt.Println("match")
-
-			aqlNoReturn("FOR doc IN DOOR_RFID" +
-				" FILTER doc.HASHED_RFID == \"" + rfidHash + "\"" +
-				"   INSERT {" +
-				"   name: doc.RFID_OWNER," +
-				"    time: DATE_NOW()" +
-				"  } INTO DOOR_HISTORY OPTIONS { ignoreErrors: true }")
-			fmt.Println("MATCH")
-			tcpPacketOut.DoorRequest = LOCK_STATUS_APPROVED
-		} else {
-			fmt.Println("NO MATCH")
-			tcpPacketOut.DoorRequest = LOCK_STATUS_DISAPPROVED
-		}
-
-		udpSendPackage()
-
-	}
-
-}
-
-func udpSendPackage() {
-
-	p := make([]byte, 2)
-	conn, err := net.Dial("udp", embeddedAddress+":"+embeddedPort)
-	if err != nil {
-		fmt.Printf("Some error %v", err)
-		return
-	}
-
-	data, err := proto.Marshal(&tcpPacketOut)
-	if err != nil {
-		fmt.Println("marshall error", err)
-
-	}
-
-	fmt.Println(data)
-
-	fmt.Fprintf(conn, string(data))
-	_, err = bufio.NewReader(conn).Read(p)
-	if err == nil {
-		fmt.Printf("%s\n", p)
-	} else {
-		fmt.Printf("Some error %v\n", err)
-	}
-	conn.Close()
-
 }

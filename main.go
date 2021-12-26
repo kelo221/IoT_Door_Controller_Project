@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	embeddedAddress = "192.168.1.38"
-	embeddedPort    = "8081"
+	embeddedAddress = "192.168.1.77"
+	embeddedPort    = "8082"
 	tcpListenPort   = "8082"
 )
 
@@ -19,18 +19,7 @@ var tcpPacketOut = Door_Request{
 }
 
 func main() {
-
-	//	The server sends out the lock status and if a door has to be opened
-
-	/*	//	The server receives a package from the embedded device, which contains the RFID data only.
-		tcpPacketIn := RFID_MESSAGE{
-			state:         protoimpl.MessageState{},
-			sizeCache:     0,
-			unknownFields: nil,
-			RFID_CODE:     "",
-		}
-	*/
-	go tcpListenerLoop()
+	go handleMQTTIn()
 	handleDatabase()
 	createAccounts()
 	createRDIF()
