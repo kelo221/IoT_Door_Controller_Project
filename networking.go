@@ -5,12 +5,13 @@ import (
 	"encoding/hex"
 	"fmt"
 	swagger "github.com/arsmn/fiber-swagger/v2"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"strconv"
 	"time"
 
 	jwtware "github.com/gofiber/jwt/v3"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // @title IoT Door Controller Project
