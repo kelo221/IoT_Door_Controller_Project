@@ -18,6 +18,8 @@ func handleMQTTOut() {
 
 	}
 
+	fmt.Println(tcpPacketOut.GetLockStatus())
+	fmt.Println(tcpPacketOut.GetDoorRequest())
 	fmt.Println(data)
 
 	opts := MQTT.NewClientOptions().AddBroker("tcp://192.168.1.77:1883")

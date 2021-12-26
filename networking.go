@@ -113,8 +113,10 @@ func updateLock(c *fiber.Ctx) error {
 	name := claims["name"].(string)
 	fmt.Println(name)
 
-	if i >= 0 && i <= 3 {
-		tcpPacketOut.LockStatus = LOCK_STATUSLock(i)
+	if i >= 0 && i <= 2 {
+		tcpPacketOut.Reset()
+		tcpPacketOut.LockStatus = Door_RequestLock(i + 1)
+		tcpPacketOut.DoorRequest = Door_Request_DISAPPROVED // so it wont sent empty array
 		handleMQTTOut()
 
 		aqlNoReturn(
@@ -136,10 +138,11 @@ func updateLock(c *fiber.Ctx) error {
 // @Success 200
 // @Router /manualOpen [put]
 func forceOpen(c *fiber.Ctx) error {
-	tcpPacketOut.DoorRequest = LOCK_STATUS_APPROVED
+	tcpPacketOut.LockStatus = Door_Request_HARD // Just making sure
+	tcpPacketOut.DoorRequest = Door_Request_APPROVED
 	handleMQTTOut()
 	fmt.Println("door manually opened")
-	tcpPacketOut.DoorRequest = LOCK_STATUS_NO_REQUEST
+	tcpPacketOut.DoorRequest = Door_Request_NO_REQUEST
 	return c.SendStatus(200)
 }
 

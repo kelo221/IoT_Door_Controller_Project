@@ -41,11 +41,13 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			"    time: DATE_NOW()" +
 			"  } INTO DOOR_HISTORY OPTIONS { ignoreErrors: true }")
 		fmt.Println("MATCH")
-		tcpPacketOut.DoorRequest = LOCK_STATUS_APPROVED
+		tcpPacketOut.DoorRequest = Door_Request_APPROVED
 	} else {
 		fmt.Println("NO MATCH")
-		tcpPacketOut.DoorRequest = LOCK_STATUS_DISAPPROVED
+		tcpPacketOut.DoorRequest = Door_Request_DISAPPROVED
 	}
+
+	tcpPacketOut.LockStatus = Door_Request_SOFT
 
 	data, err := proto.Marshal(&tcpPacketOut)
 	if err != nil {
@@ -56,6 +58,9 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 
 	// send the package on MQTT
 	handleMQTTOut()
+
+	tcpPacketOut.DoorRequest = Door_Request_NO_REQUEST
+
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
