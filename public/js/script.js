@@ -55,26 +55,29 @@ function DoorTable() {
             let parsed = JSON.parse(string1);
 
            // console.log(parsed + "here is data")
-//
-            for (let i = 0; i < parsed.data.length; i++) {
 
-                let tr = document.createElement('tr')
-                let td1 = document.createElement('th')
-                let td2 = document.createElement('td')
-                let td3 = document.createElement('td')
-                let text1 = document.createTextNode((i + 1).toString())
-                let text2 = document.createTextNode(parsed.data[i].name)
-                let text3 = document.createTextNode(convertEpochToSpecificTimezone(parsed.data[i].time, +3))
-                td1.appendChild(text1)
-                td2.appendChild(text2)
-                td3.appendChild(text3)
-                tr.appendChild(td1)
-                tr.appendChild(td2)
-                tr.appendChild(td3)
+            if(!string1.includes("{\"data\":null,")) {
+
+                for (let i = 0; i < parsed.data.length; i++) {
+
+                    let tr = document.createElement('tr')
+                    let td1 = document.createElement('th')
+                    let td2 = document.createElement('td')
+                    let td3 = document.createElement('td')
+                    let text1 = document.createTextNode((i + 1).toString())
+                    let text2 = document.createTextNode(parsed.data[i].name)
+                    let text3 = document.createTextNode(convertEpochToSpecificTimezone(parsed.data[i].time, +3))
+                    td1.appendChild(text1)
+                    td2.appendChild(text2)
+                    td3.appendChild(text3)
+                    tr.appendChild(td1)
+                    tr.appendChild(td2)
+                    tr.appendChild(td3)
 
 
-                document.getElementById("doorTable").appendChild(tr)
+                    document.getElementById("doorTable").appendChild(tr)
 
+                }
             }
 
         })
@@ -110,31 +113,32 @@ function LockTable() {
             let parsed = JSON.parse(string1);
 
           //  console.log(parsed + "here is data")
+            if(!string1.includes("{\"data\":null,")) {
 
-            for (let i = 0; i < parsed.data.length; i++) {
+                for (let i = 0; i < parsed.data.length; i++) {
 
-                let tr = document.createElement('tr')
-                let td1 = document.createElement('th')
-                let td2 = document.createElement('td')
-                let td3 = document.createElement('td')
-                let td4 = document.createElement('td')
-                let text1 = document.createTextNode((i + 1).toString())
-                let text2 = document.createTextNode(parsed.data[i].mode)
-                let text3 = document.createTextNode(parsed.data[i].name)
-                let text4 = document.createTextNode(convertEpochToSpecificTimezone(parsed.data[i].time, +3))
-                td1.appendChild(text1)
-                td2.appendChild(text2)
-                td3.appendChild(text3)
-                td4.appendChild(text4)
-                tr.appendChild(td1)
-                tr.appendChild(td2)
-                tr.appendChild(td3)
-                tr.appendChild(td4)
+                    let tr = document.createElement('tr')
+                    let td1 = document.createElement('th')
+                    let td2 = document.createElement('td')
+                    let td3 = document.createElement('td')
+                    let td4 = document.createElement('td')
+                    let text1 = document.createTextNode((i + 1).toString())
+                    let text2 = document.createTextNode(parsed.data[i].mode)
+                    let text3 = document.createTextNode(parsed.data[i].name)
+                    let text4 = document.createTextNode(convertEpochToSpecificTimezone(parsed.data[i].time, +3))
+                    td1.appendChild(text1)
+                    td2.appendChild(text2)
+                    td3.appendChild(text3)
+                    td4.appendChild(text4)
+                    tr.appendChild(td1)
+                    tr.appendChild(td2)
+                    tr.appendChild(td3)
+                    tr.appendChild(td4)
 
 
+                    document.getElementById("lockTable").appendChild(tr)
 
-                document.getElementById("lockTable").appendChild(tr)
-
+                }
             }
 
         })
