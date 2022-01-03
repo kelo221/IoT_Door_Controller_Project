@@ -3,7 +3,7 @@
 
 A fullstack door control system, using an Arduino, NFC, passive infrared motion sensor and a servo motor. The door opens when either the sensor detects a motion or the lock requirements are met (NFC or manually opened).
 The web interface controls the lock state of the door and passes requests to the backend in order to send and receive information.
-REST API documentation can be found at http://localhost:8080/swagger/index.html#/, once the server is running. The technical documentation is uploaded here as well.
+REST API documentation can be found at http://localhost:8080/swagger/index.html#/, once the server is running. The technical documentation and the User Manual are uploaded here as well.
 
 ![Door drawio](https://user-images.githubusercontent.com/56063237/146462973-2939beef-df30-462d-ac75-b00a9305da29.png)
 
